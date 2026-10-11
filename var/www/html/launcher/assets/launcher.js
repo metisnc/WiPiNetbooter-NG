@@ -45,6 +45,7 @@
     density: '2x3',
     video: true,
     sound: false,
+    simulate: false,
   };
 
   // ---------- helpers ----------
@@ -340,21 +341,6 @@
     const box = $('filter-groups');
     const scrollTop = box.scrollTop;
     box.textContent = '';
-    chipGroup(box, 'Affichage', Object.keys(DENSITIES).map((d) => [d, d.replace('x', '\u00D7')]),
-      (d) => d === state.density,
-      (d) => {
-        state.density = d;
-        layout();
-        renderFilters();
-        render();
-      });
-    chipGroup(box, 'Vidéo dans la fiche', [[true, 'Oui'], [false, 'Non']],
-      (v) => v === state.video,
-      (v) => {
-        state.video = v;
-        renderFilters();
-        save();
-      });
     FILTER_GROUPS.forEach(({ key, title }) => {
       const values = Array.from(new Set(state.games.map((g) => g[key]).filter(Boolean))).sort();
       const group = el('div', 'filter-group');
@@ -377,6 +363,85 @@
       box.appendChild(group);
     });
     box.scrollTop = scrollTop;
+  }
+
+  // ---------- settings ----------
+  let dimmsInfo = null; // null = checking, [] = none configured
+
+  function settingsRow(box, label, sub, status) {
+    const row = el('div', 'settings-row');
+    const text = el('span', 'label', label);
+    if (sub) {
+      text.appendChild(document.createTextNode(' '));
+      text.appendChild(el('span', 'sub', sub));
+    }
+    row.appendChild(text);
+    if (status) row.appendChild(el('span', status[0], status[1]));
+    box.appendChild(row);
+  }
+
+  function renderSettings() {
+    const box = $('settings-body');
+    const scrollTop = box.scrollTop;
+    box.textContent = '';
+
+    chipGroup(box, 'Affichage', Object.keys(DENSITIES).map((d) => [d, d.replace('x', '\u00D7')]),
+      (d) => d === state.density,
+      (d) => {
+        state.density = d;
+        layout();
+        renderSettings();
+        render();
+      });
+    chipGroup(box, 'Vidéo dans la fiche', [[true, 'Oui'], [false, 'Non']],
+      (v) => v === state.video,
+      (v) => {
+        state.video = v;
+        renderSettings();
+        save();
+      });
+
+    const net = el('div', 'filter-group');
+    net.appendChild(el('h3', null, 'Netdimms'));
+    box.appendChild(net);
+    if (dimmsInfo === null) {
+      box.appendChild(el('p', 'settings-note', 'Vérification…'));
+    } else if (!dimmsInfo.length) {
+      box.appendChild(el('p', 'settings-note', 'Aucun netdimm configuré (Interface WiPi \u203A Setup \u203A Manage Netdimms).'));
+    } else {
+      dimmsInfo.forEach((d) => settingsRow(box, d.name, d.ip + ' \u00B7 ' + systemInfo(d.type).label,
+        d.online ? ['on', '\u25CF en ligne'] : ['off', '\u25CB hors ligne']));
+    }
+    const refresh = el('button', 'pill', 'Actualiser');
+    refresh.addEventListener('click', checkDimms);
+    box.appendChild(refresh);
+
+    const info = el('div', 'filter-group');
+    info.appendChild(el('h3', null, 'Launcher'));
+    box.appendChild(info);
+    settingsRow(box, state.games.length + ' jeux disponibles', null,
+      state.simulate ? ['off', 'mode SIMULATION'] : ['on', 'lancements réels']);
+
+    const legacy = el('button', 'pill primary wide-btn', 'Interface WiPi complète  \u203A');
+    legacy.addEventListener('click', openLegacy);
+    box.appendChild(legacy);
+    box.appendChild(el('p', 'settings-note', 'Options, netdimms, OpenJVS, cartes, réseau\u2026 Le bouton \u2302 ramène au launcher.'));
+
+    box.scrollTop = scrollTop;
+  }
+
+  function openLegacy() {
+    location.href = '/gamelist.php?display=all';
+  }
+
+  function checkDimms() {
+    dimmsInfo = null;
+    renderSettings();
+    fetch('api/dimms.php', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((data) => { dimmsInfo = data.dimms; })
+      .catch(() => { dimmsInfo = []; })
+      .then(() => { if (!$('settings').hidden) renderSettings(); });
   }
 
   // ---------- game sheet ----------
@@ -463,7 +528,8 @@
       renderFilters();
       render();
     });
-    $('btn-settings').addEventListener('click', () => { location.href = '/gamelist.php?display=all'; });
+    $('btn-settings').addEventListener('click', () => { openOverlay('settings'); checkDimms(); });
+    $('btn-legacy').addEventListener('click', openLegacy);
     $('sheet-fave').addEventListener('click', toggleFave);
     $('btn-launch').addEventListener('click', () => {
       if (state.sheetGame && window.WLaunch) window.WLaunch.start(state.sheetGame);
@@ -484,6 +550,7 @@
     window.addEventListener('resize', () => { layout(); render(); });
     bindSwipe();
     dragScroll($('filter-groups'));
+    dragScroll($('settings-body'));
   }
 
   function load() {
@@ -495,6 +562,7 @@
         state.games.forEach((g) => { state.byRom[g.rom] = g; });
         state.history = data.history || [];
         state.sound = !!data.sound;
+        state.simulate = !!data.simulate;
         $('sim-flag').hidden = !data.simulate;
         renderTabs();
         render();

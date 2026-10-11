@@ -48,6 +48,11 @@ function asset($path)
     <div id="filter-groups" class="overlay-body"></div>
   </section>
 
+  <section id="settings" class="overlay" hidden>
+    <div class="overlay-head"><button id="btn-legacy" class="pill">Interface WiPi &#8250;</button><span>Réglages</span><button class="icon-btn close" data-close>&#10005;</button></div>
+    <div id="settings-body" class="overlay-body"></div>
+  </section>
+
   <section id="sheet" class="overlay sheet" hidden>
     <div class="overlay-head">
       <button class="pill" data-close>&#8249; Retour</button>

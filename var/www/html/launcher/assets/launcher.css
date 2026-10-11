@@ -281,6 +281,22 @@ button:focus { outline: none; }
 }
 .az-keys button:active { background: var(--cyan); color: var(--bg); }
 
+.pill.primary { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 4px 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.settings-row .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.settings-row .sub { color: var(--muted); font-size: 12px; }
+.settings-row .on { color: var(--ok); }
+.settings-row .off { color: var(--danger); }
+.settings-note { margin: 6px 4px; color: var(--muted); font-size: 13px; }
+.wide-btn { width: 100%; min-height: 50px; margin-top: 14px; font-size: 16px; border-radius: 25px; }
 .filter-group h3 { margin: 8px 2px 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chips .pill { font-weight: normal; }

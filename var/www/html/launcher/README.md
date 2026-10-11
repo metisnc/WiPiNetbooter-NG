@@ -2,11 +2,12 @@
 
 Interface de **sélection et de lancement des jeux** pour WiPi Netbooter 6.1-92, pensée pour l'écran tactile MHS 3,5" (480×320) branché sur le Raspberry Pi. Elle fonctionne aussi sur téléphone et PC.
 
-Le launcher vit entièrement dans `/var/www/html/launcher/` et **ne modifie aucun fichier de l'interface WiPi existante**. Les réglages (options, netdimms, OpenJVS, cartes, réseau…) restent dans l'interface d'origine, accessible par le bouton ⚙.
+Le launcher vit entièrement dans `/var/www/html/launcher/` et **ne modifie aucun fichier de l'interface WiPi existante**. Les réglages WiPi (options, netdimms, OpenJVS, cartes, réseau…) restent dans l'interface d'origine, accessible depuis **⚙ Réglages → Interface WiPi**.
 
 ## Fonctionnalités
 
 - Grille de logos paginée, au choix **3×3, 2×3, 2×2 ou 1×2** sur le 3,5" (plus de tuiles sur un grand écran).
+- Écran **⚙ Réglages** : affichage de la grille, vidéo dans la fiche, état des netdimms (en ligne ou non), nombre de jeux et mode simulation/réel, bouton **Interface WiPi** vers l'interface d'origine.
 - Onglets **★ Favoris**, **TOUS**, un onglet par système présent (Naomi, Naomi 2, Atomiswave, Chihiro, Triforce) et **↺ Récents**.
 - Saut **A–Z** plein écran, filtres **Genre / Orientation / Contrôles** à choix multiple (OU dans un groupe, ET entre les groupes).
 - Fiche jeu : vidéo (optionnelle), infos, favori ☆/★, gros bouton **LANCER**. Toujours 2 taps pour lancer : tuile puis LANCER.
@@ -77,6 +78,7 @@ launcher/
   assets/launch.js      écran de lancement
   api/lib.php           lecture romsinfo.csv / dimms.csv / fichiers de mode
   api/games.php         GET  liste des jeux, historique, simulate, sound
+  api/dimms.php         GET  netdimms de dimms.csv + ping (écran Réglages)
   api/launch.php        POST {rom, dimm?, sim?} -> started | choose | nodimm | busy | error
   api/status.php        GET  idle | connecting | running | done | error | cancelled
   api/cancel.php        POST arrête wipiloader.py / netdimm_send
