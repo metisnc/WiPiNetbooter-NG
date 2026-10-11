@@ -82,6 +82,7 @@
   function start(g, dimm) {
     game = g;
     stopTimers();
+    WL.stopVideo();
     show(g);
     message('Recherche du netdimm…');
     progress('busy');

@@ -54,11 +54,14 @@ function asset($path)
       <span></span>
       <button id="sheet-fave" class="icon-btn fave" aria-label="Favori">&#9734;</button>
     </div>
-    <div class="sheet-body">
-      <div class="sheet-logo"><img id="sheet-img" alt=""></div>
-      <h1 id="sheet-name"></h1>
-      <p id="sheet-meta" class="meta"></p>
-      <button id="btn-launch" class="launch-btn">&#9654;&nbsp; LANCER</button>
+    <div id="sheet-body" class="sheet-body">
+      <div id="sheet-media" class="sheet-media" hidden><video id="sheet-video" muted loop playsinline preload="none"></video></div>
+      <div class="sheet-info">
+        <div class="sheet-logo"><img id="sheet-img" alt=""></div>
+        <h1 id="sheet-name"></h1>
+        <p id="sheet-meta" class="meta"></p>
+        <button id="btn-launch" class="launch-btn">&#9654;&nbsp; LANCER</button>
+      </div>
     </div>
   </section>
 

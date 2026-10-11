@@ -17,8 +17,13 @@
     { key: 'orientation', title: 'Orientation' },
     { key: 'controls', title: 'Contrôles' },
   ];
-  const TILE_MIN_W = 210;
-  const TILE_MIN_H = 66;
+  // Minimum tile size per density: gives 2x3 / 2x2 / 1x2 on the 480x320 screen, more tiles on bigger ones.
+  const DENSITIES = {
+    '2x3': { w: 210, h: 66 },
+    '2x2': { w: 210, h: 100 },
+    '1x2': { w: 300, h: 100 },
+  };
+  const VIDEO_DELAY_MS = 350;
   const GAP = 6;
   const BAR_H = 44;
   const STORE_KEY = 'wipi-launcher';
@@ -35,6 +40,9 @@
     rows: 3,
     sheetGame: null,
     narrow: false,
+    density: '2x3',
+    video: true,
+    sound: false,
   };
 
   // ---------- helpers ----------
@@ -60,7 +68,9 @@
 
   function save() {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify({ tab: state.tab, filters: state.filters, page: state.page }));
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        tab: state.tab, filters: state.filters, page: state.page, density: state.density, video: state.video,
+      }));
     } catch (e) { /* storage unavailable: not critical */ }
   }
 
@@ -71,6 +81,8 @@
         state.tab = saved.tab || 'all';
         Object.assign(state.filters, saved.filters || {});
         state.page = saved.page || 0;
+        if (DENSITIES[saved.density]) state.density = saved.density;
+        if (typeof saved.video === 'boolean') state.video = saved.video;
       }
     } catch (e) { /* ignore */ }
   }
@@ -96,14 +108,16 @@
     app.classList.toggle('narrow', state.narrow);
 
     const firstIndex = state.page * state.perPage;
-    state.cols = Math.max(1, Math.floor((w - GAP) / (TILE_MIN_W + GAP)));
-    state.rows = Math.max(1, Math.floor((h - 2 * BAR_H - GAP) / (TILE_MIN_H + GAP)));
+    const tile = DENSITIES[state.density];
+    state.cols = Math.max(1, Math.floor((w - GAP) / (tile.w + GAP)));
+    state.rows = Math.max(1, Math.floor((h - 2 * BAR_H - GAP) / (tile.h + GAP)));
     state.perPage = state.cols * state.rows;
     state.page = Math.floor(firstIndex / state.perPage);
 
     const grid = $('grid');
     grid.style.gridTemplateColumns = 'repeat(' + state.cols + ', minmax(0, 1fr))';
     grid.style.gridTemplateRows = 'repeat(' + state.rows + ', minmax(0, 1fr))';
+    grid.classList.toggle('large', state.density !== '2x3');
   }
 
   // ---------- data ----------
@@ -273,9 +287,37 @@
     });
   }
 
+  function chipGroup(box, title, options, isOn, onPick) {
+    const group = el('div', 'filter-group');
+    group.appendChild(el('h3', null, title));
+    const chips = el('div', 'chips');
+    options.forEach(([value, label]) => {
+      const chip = el('button', 'pill' + (isOn(value) ? ' on' : ''), label);
+      chip.addEventListener('click', () => onPick(value));
+      chips.appendChild(chip);
+    });
+    group.appendChild(chips);
+    box.appendChild(group);
+  }
+
   function renderFilters() {
     const box = $('filter-groups');
     box.textContent = '';
+    chipGroup(box, 'Affichage', Object.keys(DENSITIES).map((d) => [d, d.replace('x', '\u00D7')]),
+      (d) => d === state.density,
+      (d) => {
+        state.density = d;
+        layout();
+        renderFilters();
+        render();
+      });
+    chipGroup(box, 'Vidéo dans la fiche', [[true, 'Oui'], [false, 'Non']],
+      (v) => v === state.video,
+      (v) => {
+        state.video = v;
+        renderFilters();
+        save();
+      });
     FILTER_GROUPS.forEach(({ key, title }) => {
       const values = Array.from(new Set(state.games.map((g) => g[key]).filter(Boolean))).sort();
       const group = el('div', 'filter-group');
@@ -297,8 +339,41 @@
   }
 
   // ---------- game sheet ----------
+  let videoTimer = null;
+
+  function stopVideo() {
+    clearTimeout(videoTimer);
+    const v = $('sheet-video');
+    if (v.getAttribute('src')) {
+      v.pause();
+      v.removeAttribute('src');
+      v.load(); // releases the decoder
+    }
+  }
+
+  function showVideo(game) {
+    const withVideo = state.video && !!game.video;
+    $('sheet-body').classList.toggle('has-video', withVideo);
+    $('sheet-media').hidden = !withVideo;
+    if (!withVideo) return;
+    const v = $('sheet-video');
+    v.muted = !state.sound;
+    // Start decoding only once the sheet is shown: a quick tap on LANCER costs nothing.
+    videoTimer = setTimeout(() => {
+      v.src = '/videos/' + encodeURIComponent(game.video);
+      v.play().catch(() => {});
+    }, VIDEO_DELAY_MS);
+  }
+
+  function closeSheet() {
+    stopVideo();
+    closeOverlay('sheet');
+  }
+
   function openSheet(game) {
+    stopVideo();
     state.sheetGame = game;
+    showVideo(game);
     const img = $('sheet-img');
     img.hidden = !game.image;
     img.src = game.image ? imageUrl(game) : '';
@@ -353,7 +428,16 @@
       if (state.sheetGame && window.WLaunch) window.WLaunch.start(state.sheetGame);
     });
     document.querySelectorAll('[data-close]').forEach((b) => {
-      b.addEventListener('click', () => { b.closest('.overlay').hidden = true; });
+      b.addEventListener('click', () => {
+        const overlay = b.closest('.overlay');
+        if (overlay.id === 'sheet') closeSheet();
+        else overlay.hidden = true;
+      });
+    });
+    $('sheet-video').addEventListener('error', () => {
+      if (!$('sheet-video').getAttribute('src')) return;
+      $('sheet-media').hidden = true;
+      $('sheet-body').classList.remove('has-video');
     });
     document.addEventListener('contextmenu', (e) => e.preventDefault());
     window.addEventListener('resize', () => { layout(); render(); });
@@ -368,6 +452,7 @@
         state.byRom = {};
         state.games.forEach((g) => { state.byRom[g.rom] = g; });
         state.history = data.history || [];
+        state.sound = !!data.sound;
         $('sim-flag').hidden = !data.simulate;
         renderTabs();
         render();
@@ -386,7 +471,8 @@
     imageUrl: imageUrl,
     systemInfo: systemInfo,
     addRecent: addRecent,
-    closeSheet: () => closeOverlay('sheet'),
+    closeSheet: closeSheet,
+    stopVideo: stopVideo,
     render: () => render(),
   };
 

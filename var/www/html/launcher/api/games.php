@@ -15,6 +15,9 @@ if ($last !== null && isset($games[$last]) && !in_array($last, $history, true)) 
 $list = [];
 foreach ($games as $game) {
     unset($game['mapping'], $game['ffb']);
+    if ($game['video'] !== '' && !is_file(WEB_ROOT . '/videos/' . $game['video'])) {
+        $game['video'] = '';
+    }
     $list[] = $game;
 }
 
@@ -22,4 +25,5 @@ json_out([
     'games' => $list,
     'history' => $history,
     'simulate' => is_simulation(),
+    'sound' => read_mode('soundmode') === 'soundon',
 ]);

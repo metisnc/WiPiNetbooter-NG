@@ -122,6 +122,7 @@ function load_games()
             'system' => $row[COL_SYSTEM],
             'name' => $row[COL_NAME],
             'image' => $row[COL_IMAGE],
+            'video' => $row[COL_VIDEO],
             'manufacturer' => $row[COL_MANUFACTURER],
             'year' => $row[COL_YEAR],
             'genre' => $row[COL_GENRE],

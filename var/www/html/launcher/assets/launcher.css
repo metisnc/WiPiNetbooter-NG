@@ -209,6 +209,8 @@ button:focus { outline: none; }
   color: var(--cyan);
   opacity: .8;
 }
+.grid.large .tile .name { font-size: 13px; }
+.grid.large .tile .sys { font-size: 11px; }
 .empty {
   grid-column: 1 / -1;
   grid-row: 1 / -1;
@@ -292,6 +294,36 @@ button:focus { outline: none; }
   min-height: 0;
   text-align: center;
 }
+.sheet-info {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.sheet-media {
+  flex: 0 0 50%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.sheet-media[hidden] { display: none; }
+.sheet-media video { display: block; width: 100%; max-height: 100%; }
+.sheet-body.has-video { flex-direction: row; gap: 10px; padding-left: 8px; padding-right: 8px; }
+.has-video .sheet-logo { flex-basis: 56px; }
+.has-video h1 { font-size: 15px; }
+.has-video .meta { font-size: 12px; }
+.has-video .launch-btn { min-height: 56px; font-size: 20px; letter-spacing: 2px; }
+.narrow .sheet-body.has-video { flex-direction: column; }
+.narrow .sheet-media { flex: 0 1 auto; width: 100%; }
 .sheet-logo { flex: 0 1 96px; min-height: 40px; width: 100%; display: flex; justify-content: center; }
 .sheet-logo img { max-width: 92%; max-height: 100%; object-fit: contain; }
 .sheet-body h1, .launch-body h2 { margin: 0; font-size: 18px; line-height: 1.2; }
