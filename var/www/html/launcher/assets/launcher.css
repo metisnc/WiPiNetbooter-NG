@@ -282,6 +282,7 @@ button:focus { outline: none; }
 }
 .az-keys button:active { background: var(--cyan); color: var(--bg); }
 
+.overlay-head > .head-spacer { flex: 0 0 44px; }
 .pill.primary { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
 .settings-row {
   display: flex;

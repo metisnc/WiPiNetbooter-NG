@@ -553,7 +553,6 @@
       render();
     });
     $('btn-settings').addEventListener('click', () => { openOverlay('settings'); checkDimms(); });
-    $('btn-legacy').addEventListener('click', openLegacy);
     $('sheet-fave').addEventListener('click', toggleFave);
     $('btn-launch').addEventListener('click', () => {
       if (state.sheetGame && window.WLaunch) window.WLaunch.start(state.sheetGame);

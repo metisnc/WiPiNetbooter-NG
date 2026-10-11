@@ -49,7 +49,7 @@ function asset($path)
   </section>
 
   <section id="settings" class="overlay" hidden>
-    <div class="overlay-head"><button id="btn-legacy" class="pill">Interface WiPi &#8250;</button><span>Réglages</span><button class="icon-btn close" data-close>&#10005;</button></div>
+    <div class="overlay-head"><span class="head-spacer"></span><span>Réglages</span><button class="icon-btn close" data-close>&#10005;</button></div>
     <div id="settings-body" class="overlay-body"></div>
   </section>
 
