@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "WiPi Launcher home button",
+  "version": "1.0",
+  "description": "Adds a button back to the touch launcher on the existing WiPi pages (kiosk only).",
+  "content_scripts": [
+    {
+      "matches": ["http://127.0.0.1/*", "http://localhost/*"],
+      "exclude_matches": ["http://127.0.0.1/launcher/*", "http://localhost/launcher/*"],
+      "js": ["home.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
