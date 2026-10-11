@@ -8,7 +8,7 @@ Le launcher vit entièrement dans `/var/www/html/launcher/` et **ne modifie aucu
 
 - Grille de logos paginée, au choix **3×3, 2×3, 2×2 ou 1×2** sur le 3,5" (plus de tuiles sur un grand écran).
 - Onglets **★ Favoris**, **TOUS**, un onglet par système présent (Naomi, Naomi 2, Atomiswave, Chihiro, Triforce) et **↺ Récents**.
-- Saut **A–Z** plein écran, filtres **Genre / Orientation / Contrôles**.
+- Saut **A–Z** plein écran, filtres **Genre / Orientation / Contrôles** à choix multiple (OU dans un groupe, ET entre les groupes).
 - Fiche jeu : vidéo (optionnelle), infos, favori ☆/★, gros bouton **LANCER**. Toujours 2 taps pour lancer : tuile puis LANCER.
 - Écran de lancement : recherche du netdimm, choix de la borne s'il y en a plusieurs, progression en %, succès, erreur avec la fin du log, **Réessayer** et **Annuler**.
 - Pages tournées avec les flèches ◀ ▶ ou par glissement horizontal sur la grille.

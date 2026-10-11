@@ -35,7 +35,7 @@
     byRom: {},
     history: [],
     tab: 'all',
-    filters: { genre: null, orientation: null, controls: null },
+    filters: { genre: [], orientation: [], controls: [] }, // several values per group: OR inside, AND between groups
     page: 0,
     perPage: 6,
     cols: 2,
@@ -81,7 +81,10 @@
       const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
       if (saved) {
         state.tab = saved.tab || 'all';
-        Object.assign(state.filters, saved.filters || {});
+        FILTER_GROUPS.forEach(({ key }) => {
+          const value = (saved.filters || {})[key];
+          state.filters[key] = Array.isArray(value) ? value : value ? [value] : [];
+        });
         state.page = saved.page || 0;
         if (DENSITIES[saved.density]) state.density = saved.density;
         if (typeof saved.video === 'boolean') state.video = saved.video;
@@ -132,8 +135,8 @@
     else list = state.games.filter((g) => g.system === state.tab);
 
     FILTER_GROUPS.forEach(({ key }) => {
-      const value = state.filters[key];
-      if (value) list = list.filter((g) => g[key] === value);
+      const values = state.filters[key];
+      if (values.length) list = list.filter((g) => values.indexOf(g[key]) !== -1);
     });
     return list;
   }
@@ -217,7 +220,7 @@
     $('btn-prev').disabled = state.page === 0;
     $('btn-next').disabled = state.page >= pages - 1;
 
-    const active = FILTER_GROUPS.filter(({ key }) => state.filters[key]).length;
+    const active = FILTER_GROUPS.reduce((n, { key }) => n + state.filters[key].length, 0);
     $('filter-count').hidden = !active;
     $('filter-count').textContent = active;
 
@@ -335,6 +338,7 @@
 
   function renderFilters() {
     const box = $('filter-groups');
+    const scrollTop = box.scrollTop;
     box.textContent = '';
     chipGroup(box, 'Affichage', Object.keys(DENSITIES).map((d) => [d, d.replace('x', '\u00D7')]),
       (d) => d === state.density,
@@ -357,9 +361,12 @@
       group.appendChild(el('h3', null, title));
       const chips = el('div', 'chips');
       values.forEach((value) => {
-        const chip = el('button', 'pill' + (state.filters[key] === value ? ' on' : ''), value);
+        const selected = state.filters[key];
+        const chip = el('button', 'pill' + (selected.indexOf(value) !== -1 ? ' on' : ''), value);
         chip.addEventListener('click', () => {
-          state.filters[key] = state.filters[key] === value ? null : value;
+          state.filters[key] = selected.indexOf(value) !== -1
+            ? selected.filter((v) => v !== value)
+            : selected.concat([value]);
           state.page = 0;
           renderFilters();
           render();
@@ -369,6 +376,7 @@
       group.appendChild(chips);
       box.appendChild(group);
     });
+    box.scrollTop = scrollTop;
   }
 
   // ---------- game sheet ----------
@@ -450,7 +458,7 @@
     $('btn-az').addEventListener('click', () => { renderAZ(); openOverlay('az'); });
     $('btn-filters').addEventListener('click', () => { renderFilters(); openOverlay('filters'); });
     $('btn-filters-reset').addEventListener('click', () => {
-      FILTER_GROUPS.forEach(({ key }) => { state.filters[key] = null; });
+      FILTER_GROUPS.forEach(({ key }) => { state.filters[key] = []; });
       state.page = 0;
       renderFilters();
       render();
