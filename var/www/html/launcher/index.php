@@ -24,11 +24,11 @@ function asset($path)
   <main id="grid" class="grid"></main>
 
   <footer class="bar bottom">
-    <button id="btn-prev" class="nav-btn" aria-label="Page précédente">&#9664;</button>
     <button id="btn-az" class="pill">A–Z</button>
-    <button id="btn-filters" class="pill">Filtres<span id="filter-count" class="badge" hidden></span></button>
+    <button id="btn-prev" class="nav-btn" aria-label="Page précédente">&#9664;</button>
     <span id="page-info" class="page-info"></span>
     <button id="btn-next" class="nav-btn" aria-label="Page suivante">&#9654;</button>
+    <button id="btn-filters" class="pill">Filtres<span id="filter-count" class="badge" hidden></span></button>
   </footer>
 
   <div id="sim-flag" class="sim-flag" hidden>SIMULATION</div>

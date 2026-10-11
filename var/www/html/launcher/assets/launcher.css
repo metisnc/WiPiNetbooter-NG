@@ -12,6 +12,7 @@
   --danger: #ff4d5e;
   --ok: #3dff9a;
   --bar-h: 44px;
+  --bottom-h: 54px;
   --gap: 6px;
   --radius: 10px;
 }
@@ -60,7 +61,7 @@ button:focus { outline: none; }
   background: rgba(10, 11, 18, .92);
 }
 .bar.top { border-bottom: 1px solid var(--line); }
-.bar.bottom { border-top: 1px solid var(--line); align-items: center; }
+.bar.bottom { flex-basis: var(--bottom-h); border-top: 1px solid var(--line); align-items: center; gap: 6px; padding: 0 6px; }
 
 .tabs {
   flex: 1;
@@ -94,9 +95,9 @@ button:focus { outline: none; }
 .icon-btn:active { background: var(--panel-2); color: var(--text); }
 
 .nav-btn {
-  flex: 0 0 64px;
-  height: 38px;
-  font-size: 18px;
+  flex: 0 0 96px;
+  height: 46px;
+  font-size: 24px;
   border-radius: var(--radius);
   background: var(--panel-2);
   border: 1px solid var(--line);
@@ -138,7 +139,7 @@ button:focus { outline: none; }
 }
 
 /* Narrow screens (3.5" in portrait = 320px wide) */
-.narrow .nav-btn { flex-basis: 48px; }
+.narrow .nav-btn { flex-basis: 64px; }
 .narrow .pill { min-width: 48px; padding: 0 9px; }
 .narrow .tab { padding: 0 3px; font-size: 10px; }
 
@@ -226,7 +227,7 @@ button:focus { outline: none; }
 
 .sim-flag {
   position: absolute;
-  bottom: calc(var(--bar-h) + 2px);
+  bottom: calc(var(--bottom-h) + 2px);
   right: 6px;
   padding: 1px 6px;
   font-size: 9px;

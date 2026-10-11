@@ -19,14 +19,15 @@
   ];
   // Minimum tile size per density: gives 3x3 / 2x3 / 2x2 / 1x2 on the 480x320 screen, more tiles on bigger ones.
   const DENSITIES = {
-    '3x3': { w: 150, h: 66 },
-    '2x3': { w: 210, h: 66 },
+    '3x3': { w: 150, h: 62 },
+    '2x3': { w: 210, h: 62 },
     '2x2': { w: 210, h: 100 },
     '1x2': { w: 300, h: 100 },
   };
   const VIDEO_DELAY_MS = 350;
   const GAP = 6;
-  const BAR_H = 44;
+  const TOP_H = 44;
+  const BOTTOM_H = 54;
   const STORE_KEY = 'wipi-launcher';
 
   const state = {
@@ -111,7 +112,7 @@
     const firstIndex = state.page * state.perPage;
     const tile = DENSITIES[state.density];
     state.cols = Math.max(1, Math.floor((w - GAP) / (tile.w + GAP)));
-    state.rows = Math.max(1, Math.floor((h - 2 * BAR_H - GAP) / (tile.h + GAP)));
+    state.rows = Math.max(1, Math.floor((h - TOP_H - BOTTOM_H - GAP) / (tile.h + GAP)));
     state.perPage = state.cols * state.rows;
     state.page = Math.floor(firstIndex / state.perPage);
 
