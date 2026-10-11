@@ -17,8 +17,9 @@
     { key: 'orientation', title: 'Orientation' },
     { key: 'controls', title: 'Contrôles' },
   ];
-  // Minimum tile size per density: gives 2x3 / 2x2 / 1x2 on the 480x320 screen, more tiles on bigger ones.
+  // Minimum tile size per density: gives 3x3 / 2x3 / 2x2 / 1x2 on the 480x320 screen, more tiles on bigger ones.
   const DENSITIES = {
+    '3x3': { w: 150, h: 66 },
     '2x3': { w: 210, h: 66 },
     '2x2': { w: 210, h: 100 },
     '1x2': { w: 300, h: 100 },
@@ -118,6 +119,7 @@
     grid.style.gridTemplateColumns = 'repeat(' + state.cols + ', minmax(0, 1fr))';
     grid.style.gridTemplateRows = 'repeat(' + state.rows + ', minmax(0, 1fr))';
     grid.classList.toggle('large', state.density !== '2x3');
+    grid.classList.toggle('small', state.density === '3x3');
   }
 
   // ---------- data ----------

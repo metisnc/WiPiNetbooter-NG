@@ -210,6 +210,8 @@ button:focus { outline: none; }
   opacity: .8;
 }
 .grid.large .tile .name { font-size: 13px; }
+.grid.small .tile { padding: 3px 4px 2px; }
+.grid.small .tile .name { font-size: 10px; }
 .grid.large .tile .sys { font-size: 11px; }
 .empty {
   grid-column: 1 / -1;
