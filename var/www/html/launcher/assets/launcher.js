@@ -34,6 +34,7 @@
     cols: 2,
     rows: 3,
     sheetGame: null,
+    narrow: false,
   };
 
   // ---------- helpers ----------
@@ -91,6 +92,8 @@
     }
     app.style.width = w + 'px';
     app.style.height = h + 'px';
+    state.narrow = w < 400;
+    app.classList.toggle('narrow', state.narrow);
 
     const firstIndex = state.page * state.perPage;
     state.cols = Math.max(1, Math.floor((w - GAP) / (TILE_MIN_W + GAP)));
@@ -193,7 +196,7 @@
 
     if (direction) grid.classList.remove('turn-next', 'turn-prev');
 
-    $('page-info').textContent = (state.page + 1) + ' / ' + pages + '  ·  ' + list.length + ' jeux';
+    $('page-info').textContent = (state.page + 1) + ' / ' + pages + (state.narrow ? '' : '  ·  ' + list.length + ' jeux');
     $('btn-prev').disabled = state.page === 0;
     $('btn-next').disabled = state.page >= pages - 1;
 

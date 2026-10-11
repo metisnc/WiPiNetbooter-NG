@@ -5,9 +5,10 @@ function asset($path)
     return 'assets/' . $path . '?v=' . @filemtime(__DIR__ . '/assets/' . $path);
 }
 ?><!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" translate="no">
 <head>
 <meta charset="utf-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#07080d">
 <title>WiPi Launcher</title>
