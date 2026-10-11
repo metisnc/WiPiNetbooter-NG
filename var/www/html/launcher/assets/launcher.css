@@ -263,7 +263,7 @@ button:focus { outline: none; }
   font-weight: bold;
 }
 .overlay-head > span { flex: 1; text-align: center; }
-.overlay-body { flex: 1; overflow-y: auto; padding: 6px 8px 12px; }
+.overlay-body { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 8px 12px; }
 
 .az-keys {
   flex: 1;

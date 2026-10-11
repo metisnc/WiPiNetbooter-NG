@@ -259,6 +259,36 @@
     });
   }
 
+  // Resistive touch arrives as a mouse in the kiosk: dragging must scroll by hand.
+  function dragScroll(box) {
+    let startY = 0;
+    let startTop = 0;
+    let pressed = false;
+    let dragged = false;
+    box.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      pressed = true;
+      dragged = false;
+      startY = e.clientY;
+      startTop = box.scrollTop;
+    });
+    box.addEventListener('pointermove', (e) => {
+      if (!pressed) return;
+      const dy = e.clientY - startY;
+      if (Math.abs(dy) > 8) dragged = true;
+      if (dragged) box.scrollTop = startTop - dy;
+    });
+    window.addEventListener('pointerup', () => { pressed = false; });
+    // A drag must not also tap the chip it started on
+    box.addEventListener('click', (e) => {
+      if (dragged) {
+        e.preventDefault();
+        e.stopPropagation();
+        dragged = false;
+      }
+    }, true);
+  }
+
   // ---------- overlays ----------
   function openOverlay(id) { $(id).hidden = false; }
   function closeOverlay(id) { $(id).hidden = true; }
@@ -445,6 +475,7 @@
     document.addEventListener('contextmenu', (e) => e.preventDefault());
     window.addEventListener('resize', () => { layout(); render(); });
     bindSwipe();
+    dragScroll($('filter-groups'));
   }
 
   function load() {
