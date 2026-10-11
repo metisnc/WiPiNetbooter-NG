@@ -1,0 +1,58 @@
+# Virtua Tennis 2/Power Smash 2 - Chunksin 06/05/2022
+Setting00: byte, read-only, default is 30
+Setting01: byte, read-only, default is 53
+Setting02: byte, read-only, default is 44
+Setting03: byte, read-only, default is 42
+Setting04: byte, read-only, default is 50
+Setting05: byte, read-only, default is 4f
+Setting06: byte, read-only, default is 57
+Setting07: byte, read-only, default is 45
+Setting08: byte, read-only, default is 52
+Setting09: byte, read-only, default is 5f
+Setting0a: byte, read-only, default is 53
+Setting0b: byte, read-only, default is 4d
+Setting0c: byte, read-only, default is 41
+Setting0d: byte, read-only, default is 53
+Setting0e: byte, read-only, default is 48
+Setting0f: byte, read-only, default is 32
+Setting10: byte, read-only, default is 21
+Difficulty: byte, default is 01
+  0 - Easy
+  1 - Normal
+  2 - Hard
+  3 - Very Hard
+Match Count (CPU): byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+Match Count (VS): byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+Match Count (DBL): byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+Deuce: byte, default is 01
+  0 - Off
+  1 - On
+  2 - 9 Times
+Setting16: byte, read-only, default is value of Deuce
+Setting17: byte, read-only, default is 00
+Tie Break (VS): byte, default is 00
+  0 - Off
+  1 - On
+Setting19: byte, read-only, default is 00
+Setting1a: byte, read-only, default is 01
+Doubles: byte, default is 01
+  0 - Off
+  1 - On

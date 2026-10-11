@@ -1,0 +1,79 @@
+# Confidential Mission - Chunksin 07/05/2022 - Work In Progress
+Setting00: byte, read-only, default is 30
+Setting01: byte, read-only, default is 52
+Setting02: byte, read-only, default is 43
+Setting03: byte, read-only, default is 42
+Setting04: byte, read-only, default is 43
+Setting05: byte, read-only, default is 4d
+Setting06: byte, read-only, default is 46
+Setting07: byte, read-only, default is 20
+Game Difficulty: byte, default is 60
+   0 - 1 (Easy)
+  20 - 2
+  40 - 3
+  60 - 4
+  80 - 5
+  a0 - 6
+  c0 - 7
+  e0 - 8 (Hard)
+Boss Difficulty: byte, default is 60
+   0 - 1 (Easy)
+  20 - 2
+  40 - 3
+  60 - 4
+  80 - 5
+  a0 - 6
+  c0 - 7
+  e0 - 8 ( Hard)
+Shifting Difficulty: byte, default is 03
+  0 - 1 (Easy)
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+  6 - 7
+  7 - 8 (Hard)
+Collision Size: byte, default is 0c
+  0 - 1 (Small)
+  4 - 2
+  8 - 3
+  c - 4
+ 10 - 5
+ 14 - 6
+ 18 - 7
+ 1c - 8 (Large)
+Setting0c: byte, read-only, default is 80
+Setting0d: byte, read-only, default is 80
+Setting0e: byte, read-only, default is f8
+Setting0f: byte, read-only, default is 08
+Setting10: byte, read-only, default is 08
+Setting11: byte, read-only, default is f8
+Setting12: byte, read-only, default is 80
+Setting13: byte, read-only, default is 80
+Setting14: byte, read-only, default is f8
+Setting15: byte, read-only, default is 08
+Setting16: byte, read-only, default is 08
+Setting17: byte, read-only, default is f8
+Life : byte, default is 02
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+  6 - 7
+  7 - 8
+Advertise Clock: byte, default is 01
+  0 - Off
+  1 - On
+Gun Adjust Mode: byte, default is 01
+  0 - Off
+  1 - On
+Setting1b: byte, read-only, default is 1 if Gun Adjust Mode is 1, default is 0 if Gun Adjust Mode is 0, default is 0 if Advertise Clock is 0, default is 0 if Cabinet Type is 0
+Cabinet Type: byte, default is 00
+  0 - Deluxe
+  1 - Standard
+Setting1d: byte, read-only, default is 00
+Setting1e: byte, read-only, default is 00
+Setting1f: byte, read-only, default is 00

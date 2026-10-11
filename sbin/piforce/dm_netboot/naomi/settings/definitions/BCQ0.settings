@@ -1,0 +1,48 @@
+# Alien Front - Chunksin 07/05/2022
+Setting00: byte, read-only, default is 78
+Setting01: byte, read-only, default is 56
+Setting02: byte, read-only, default is 34
+Setting03: byte, read-only, default is 12
+Setting04: byte, read-only, default is 01
+Setting05: byte, read-only, default is 01
+Difficulty: byte, read-only if Optical Type is 1, default is 01
+  0 - Easy
+  1 - Normal
+  2 - Hard
+  3 - Hardest
+Game Time: byte, read-only if Optical Type is 1, default is 03
+  0 - 60
+  1 - 90
+  2 - 120
+  3 - 150
+  4 - 180
+  5 - 210
+  6 - 240
+  7 - 270
+  8 - 300
+Setting08: byte, read-only, default is 00
+Wheel Right: byte, default is 00, values are 00 to ff in hex
+Left Pedal (Pressed): byte, default is 00, values are 00 to ff in hex
+Right Pedal (Pressed): byte, default is 00, values are 00 to ff in hex
+Wheel Left: byte, default is 00, values are 00 to ff in hex, display before Left Pedal (Pressed)
+Left Pedal (Released): byte, default is 00, values are 00 to ff in hex, display before Right Pedal (Pressed)
+Right Pedal (Released): byte, default is 00, values are 00 to ff in hex
+Wheel Centre: byte, default is 00, values are 00 to ff in hex, display before Left Pedal (Pressed)
+Setting10: byte, read-only, default is 00
+Setting11: byte, read-only, default is 00
+Win Bonus: byte, read-only if Optical Type is 1, default is 14, display before Wheel Right
+  0 - 0
+  5 - 5
+  a - 10
+  f - 15
+  14 - 20
+  19 - 25
+  1e - 30
+Optical Type: byte, default is 00, display before Wheel Right
+  0 - Master
+  1 - Slave
+  ff - No Link
+Setting14: byte, read-only, default is 00
+Setting15: byte, read-only, default is 00
+Setting16: byte, read-only, default is 00
+Setting17: byte, read-only, default is 00

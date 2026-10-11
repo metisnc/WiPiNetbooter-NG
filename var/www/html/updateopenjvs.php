@@ -12,15 +12,13 @@ echo '<div class="box2"></p>';
 echo '<b>This will update OpenJVS to the latest version</b><br><br>';
 echo '<b>Are you sure?</b><br><br>';
 echo '<form action="updateopenjvs.php?confirm=yes" method="post">';
-echo '<button type="submit" class="dropbtn" value="Confirm">Confirm</button></form><br>';
-echo '<form action="openjvs.php">';
-echo '<button type="submit" class="dropbtn" value="Cancel">Cancel</button></form><br></div>';
+echo '<button type="submit" class="dropbtn" value="Confirm">Confirm</button> <a href="openjvs.php" style="font-weight:normal" class="dropbtn">Cancel</a></form><br></div>';
 
 if ($confirm == "yes"){
 
 echo '<br>';
 ini_set('output_buffering', false);
-    $handle = popen('sudo /root/update-openjvs.sh', 'r');
+    $handle = popen('sudo bash /root/update-openjvs.sh', 'r');
     while(!feof($handle)) {
       $buffer = fgets($handle);
       echo "$buffer";

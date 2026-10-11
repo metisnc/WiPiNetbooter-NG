@@ -9,7 +9,7 @@ $wifimode = file_get_contents('/sbin/piforce/wifimode.txt');
 ?>
 <section><center>
 <h1><a href="setup.php">Network Setup</a></h1><br>
-<form action="scanning.php"><button type="submit" class="dropbtn" value="Cancel">Wifi Setup</button> <a href="wired.php" style="font-weight:normal" class="dropbtn">Wired Setup</a></form>
+<form action="scanning.php"><button type="submit" class="dropbtn" value="Cancel">Wifi Setup</button> <a href="wired.php" style="font-weight:normal" class="dropbtn">Wired Setup</a> <a href="hostname.php" style="font-weight:normal" class="dropbtn">Hostname</a></form>
 <br><br>
 <?php 
 $wiredip = `ip -o -f inet addr show | awk '/eth0/ {print $4}'`;
@@ -27,7 +27,8 @@ else {echo 'Current Wifi Mode: <b>Home WiFi</b><br>Current SSID: <b>'.$ssid.'</b
 ?>
 The WiPi Netbooter supports multiple network configurations detailed below<br><br>
 You can use the Wifi and Wired Setup options to customise the setup for your preferred configuration<br><br>
-When the Pi is joined to your home Wifi network you can browse to it from IOS, Linux and Windows 10 devices using the URL <b>http://netbooter.local</b><br><br>
+When the Pi is joined to your home Wifi network you can browse to it from IOS, Linux and Windows 10 devices using the URL <b>http://<?php echo strtolower(gethostname()); ?>.local</b> -
+you can update the hostname of the Pi to change this URL using the button above</b><br><br>
 If you are running Android you need to use a network scanner app to locate it, Fing is recommended<br><br>
 <b>NOTE:</b> If at any time the Pi becomes unavailable due to a network change it can be reset to the default hotspot mode by creating a file called <b>reset.txt</b> in the boot partition of the SD card and the Pi booted up<br><br>
 For advanced setups you can directly edit the network interfaces file <a href="interfaceseditor.php">here</a><br><br>

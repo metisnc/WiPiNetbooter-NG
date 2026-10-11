@@ -37,8 +37,30 @@ import filecmp
 import shutil
 import shortuuid
 
+def exists(path):
+    try:
+        os.stat(path)
+    except OSError:
+        return False
+    return True
+
+pidpath = '/sbin/piforce/card_emulator/pid.txt'
+
+if exists(pidpath):
+    with open(pidpath, "r") as pidfile:
+        lastpid = pidfile.readline()
+else:
+    lastpidfile = open(pidpath, "w")
+    lastpidfile.close()
+
+try:
+    print('---> Previous process PID:',lastpid)
+    os.kill(int(lastpid), 9)
+except:
+    pass
+
 currentpid = os.getpid()
-bashCommand1 = 'sudo echo -n '+str(currentpid)+' | tee /sbin/piforce/card_emulator/pid.txt'
+bashCommand1 = 'sudo echo -n '+str(currentpid)+' | tee '+pidpath
 os.system(bashCommand1)
 
 Sentinel = "FF"
@@ -141,11 +163,23 @@ def CardTranslation(NAOMIString,CardFileName,IDMode):
         CardFileName = '/boot/config/cards/idas/'+os.path.basename(CardFileName)
         print('ID card type detected: IDAS')
         IDMode = 'idas'
+    if CardBytes.find(b'SEGABEM7') > -1:
+        CardFileName = '/boot/config/cards/idas/'+os.path.basename(CardFileName)
+        print('ID card type detected: IDAS')
+        IDMode = 'idas'
     if CardBytes.find(b'SEGABFS0') > -1:
         CardFileName = '/boot/config/cards/id2/'+os.path.basename(CardFileName)
         print('ID card type detected: ID2')
         IDMode = 'id2'
+    if CardBytes.find(b'SEGABFK2') > -1:
+        CardFileName = '/boot/config/cards/id2/'+os.path.basename(CardFileName)
+        print('ID card type detected: ID2')
+        IDMode = 'id2'
     if CardBytes.find(b'SEGABHR3') > -1:
+        CardFileName = '/boot/config/cards/id3/'+os.path.basename(CardFileName)
+        print('ID card type detected: ID3')
+        IDMode = 'id3'
+    if CardBytes.find(b'SEGABHH3') > -1:
         CardFileName = '/boot/config/cards/id3/'+os.path.basename(CardFileName)
         print('ID card type detected: ID3')
         IDMode = 'id3'
@@ -598,13 +632,14 @@ def main():
                         WriteBackFile.close()
                         if CopyNFCphp: # If the data has come from a new unknown NFC card - move its associated printdata php file to the correct location
                             print('---> Moving NFC Card print data file')
-                            shutil.move("/var/log/printdata/NFC_Card.printdata.php", PrintDataFile)
+                            shutil.copy("/var/log/printdata/NFC_Card.printdata.php", PrintDataFile)
+                            os.remove("/var/log/printdata/NFC_Card.printdata.php")
                             CopyNFCphp = False # Reset CopyNFCphp variable for next card swipe
                         if (NFCCardWrite == 'yes'):
                             print('---> Writing card data to NFC card')
                             print('---> NFC data file:', CardFileName)
                             print('---> NFC print file:', PrintDataFile)
-                            cp = subprocess.Popen(["python3","/sbin/piforce/card_emulator/nfcwrite.py", CardFileName, PrintDataFile])
+                            cp = subprocess.Popen(["python3","/sbin/piforce/card_emulator/nfcwrite.py", "-m", "sega", "-f", CardFileName, "-p", PrintDataFile])
                         ReadInput=""
                         CardInserted = 1
                         CardFromDispenser = 0

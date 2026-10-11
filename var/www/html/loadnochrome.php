@@ -28,21 +28,22 @@ echo '<h1><a href="gamelist.php?display=all#anchor'.$name.'">Loading<br>'.$name.
 
 <?php
 
-$command = escapeshellcmd('sudo python /sbin/piforce/webforce.py '.$rom.' '.$dimm.' '.$relaymode.' '.$zeromode.' '.$mapping.' '.$ffb);
+$command = escapeshellcmd('sudo python3 /sbin/piforce/wipiloader.py '.$rom.' '.$dimm.' '.$relaymode.' '.$zeromode.' '.$mapping.' '.$ffb);
 $output = shell_exec($command . '> /dev/null 2>/dev/null &');
 
 $progress = 100;
+$progressfile = '/var/log/progress_'.$dimm;
 while(is_int($progress) && $progress != 0 || $progress == 'COMPLETE'){
-$handle = popen('sudo tail -n 1 /var/log/progress.txt', 'r');
+$handle = popen('sudo tail -n 1 '.$progressfile, 'r');
 $progress = fgets($handle);
 pclose($handle);
-sleep(0.1);
+sleep(0.3);
 }
 
 ?>
 
 <script type="text/javascript">
 <?php
-echo 'setTimeout(function(){window.location="loadprogress.php?name='.$name.'";}, 1)';
+echo 'setTimeout(function(){window.location="loadprogress.php?name='.$name.'&dimm='.$dimm.'";}, 1)';
 ?>
 </script>

@@ -52,7 +52,10 @@ if (analogcheck != 'NA'):
 
 # define the device file to be written to based on the device name and print device info for debug
 
-devicefile = '/etc/openjvs/devices/'+dev.name.replace(' ', '-').lower()
+devicefilename = dev.name.replace(' ', '-')
+devicefilename = devicefilename.replace('(','-')
+devicefilename = devicefilename.replace(')','-').lower()
+devicefile = '/etc/openjvs/devices/'+devicefilename
 #print('Configuration file = '+devicefile)
 #print(dev.capabilities(verbose=True))
 print('<b>Configuring '+dev.name+' -- Press any input to begin</b><br>')

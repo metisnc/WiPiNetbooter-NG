@@ -19,9 +19,11 @@ if ($mode == 'main'){
    echo '<a href="cardemulator.php?mode=idas"><img src="images/initd.png"></a></br><br>';
    echo '<a href="cardemulator.php?mode=id2"><img src="images/initd2.png"></a></br><br>';
    echo '<a href="cardemulator.php?mode=id3"><img src="images/initdv3e.png"></a></br><br>';
-   echo '<a href="cardemulator.php?mode=wmmt"><img src="images/wmmt.gif"></a></br><br>';
-   echo '<a href="cardemulator.php?mode=mkgp"><img src="images/mkgp.png"></a></br><br>';
    echo '<a href="cardemulator.php?mode=fzero"><img src="images/FZ.png"></a></br>';
+   echo '<a href="cardemulator.php?mode=mkgp"><img src="images/mkgp.png"></a></br><br>';
+   echo '<a href="cardemulator.php?mode=mkgp2"><img src="images/mkgp2.png"></a></br><br>';
+   echo '<a href="cardemulator.php?mode=wmmt"><img src="images/wmmt.png"></a></br><br>';
+   echo '<a href="cardemulator.php?mode=wmmt2"><img src="images/wmmt2.png"></a></br><br>';
 }
 
 if ($mode == 'idas'){
@@ -37,21 +39,26 @@ else {
    $files = array_values(array_diff(scandir($path), array('.', '..')));
    $i = 0;
    foreach ($files as $file) {
+   $contents = file_get_contents($path.$file);
+   if (strpos($contents, 'SEGABEM7') !== false) { 
+    $lang = 'jp';
+   }
+   else {$lang = 'en';}
    $path_parts = pathinfo($file);
    if ($path_parts['extension'] == NULL && file_exists("cards/idas/".$file.".printdata.php")){
-   echo '<a href="launchcard.php?card='.$file.'&mode=idas&launchmode='.$emumode.'"><img style="-webkit-user-select: none;" src="idcards.php?name='.$file.'&amp;mode=idas"></a><br><br>';
+   echo '<a href="launchcard.php?card='.$file.'&mode=idas&launchmode='.$emumode.'"><img style="width:80%" src="idcards.php?name='.$file.'&amp;mode=idas&amp;lang='.$lang.'"></a><br><br>';
    $i++;
          }
    }
 
 if ($i == 0){
-   echo '<b>NO CARDS FOUND</b>';
+   echo '<b>NO CARDS FOUND</b><br><br>';
 }
 
 if ($emumode == 'manual'){
-   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="idas"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
-}
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="idas"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
 
+}
 }
 
 if ($mode == 'id2'){
@@ -65,23 +72,28 @@ else {
 }
    $path = '/boot/config/cards/id2/';
    $files = array_values(array_diff(scandir($path), array('.', '..')));
-   $i = 0;
+   $i = 0; 
    foreach ($files as $file) {
+   $contents = file_get_contents($path.$file);
+   if (strpos($contents, 'SEGABFK2') !== false) { 
+    $lang = 'jp';
+   }
+   else {$lang = 'en';}
    $path_parts = pathinfo($file);
    if ($path_parts['extension'] == NULL && file_exists("cards/id2/".$file.".printdata.php")){
-   echo '<a href="launchcard.php?card='.$file.'&mode=id2&launchmode='.$emumode.'"><img style="-webkit-user-select: none;" src="idcards.php?name='.$file.'&amp;mode=id2"></a><br><br>';
+   echo '<a href="launchcard.php?card='.$file.'&mode=id2&launchmode='.$emumode.'"><img style="width:80%" src="idcards.php?name='.$file.'&amp;mode=id2&amp;lang='.$lang.'"></a><br><br>';
    $i++;
          }
    }
 
 if ($i == 0){
-   echo '<b>NO CARDS FOUND</b>';
+   echo '<b>NO CARDS FOUND</b><br><br>';
 }
 
 if ($emumode == 'manual'){
-   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="id2"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
-}
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="id2"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
 
+}
 }
 
 if ($mode == 'id3'){
@@ -97,47 +109,86 @@ else {
    $files = array_values(array_diff(scandir($path), array('.', '..')));
    $i = 0;
    foreach ($files as $file) {
+   $contents = file_get_contents($path.$file);
+   if (strpos($contents, 'SEGABHH3') !== false) { 
+    $lang = 'jp';
+   }
+   else {$lang = 'en';}
    $path_parts = pathinfo($file);
    if ($path_parts['extension'] == NULL && file_exists("cards/id3/".$file.".printdata.php")){
-   echo '<a href="launchcard.php?card='.$file.'&mode=id3&launchmode='.$emumode.'"><img style="-webkit-user-select: none;" src="idcards.php?name='.$file.'&amp;mode=id3"></a><br><br>';
+   echo '<a href="launchcard.php?card='.$file.'&mode=id3&launchmode='.$emumode.'"><img style="width:80%" src="idcards.php?name='.$file.'&amp;mode=id3&amp;lang='.$lang.'"></a><br><br>';
    $i++;
          }
    }
 
 if ($i == 0){
-   echo '<b>NO CARDS FOUND</b>';
+   echo '<b>NO CARDS FOUND</b><br><br>';
 }
 
 if ($emumode == 'manual'){
-   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="id3"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
-}
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="id3"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
 
 }
-
-if ($mode == 'wmmt'){
-   echo '<b>Emulator Mode: Wangan Midnight</b></br></br>';
-   echo 'Please choose a card from the list or you can use the form to create a new card</br></br>';
-   echo 'Once the card emulator has been launched it will stay running until a new card is launched or the pi powers off</br></br>';
-   $path = '/boot/config/cards/wmmt/';
-   $files = array_values(array_diff(scandir($path), array('.', '..')));
-   foreach ($files as $file) {
-   echo '<a href="launchcard.php?card='.$file.'&mode=wmmt&launchmode=manual"><img style="-webkit-user-select: none;" src="cards.php?name='.$file.'&amp;mode=wmmt"></a><br><br>';
-         }
-   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="wmmt"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
-
 }
 
 if ($mode == 'mkgp'){
-   echo '<b>Emulator Mode: Mario Kart GP/GP2</b></br></br>';
-   echo 'Please choose a card from the list or you can use the form to create a new card</br></br>';
+   echo '<b>Emulator Mode: Mario Kart GP ('.$emumode.')</b></br></br>';
+if ($emumode == 'auto'){
+   echo 'Please choose a card from the list or purchase a new card in the game</br><br>';
+}
+else {
+   echo 'Please choose a card from the list or use the form to create a new card</br><br>';
    echo 'Once the card emulator has been launched it will stay running until a new card is launched or the pi powers off</br></br>';
+}
    $path = '/boot/config/cards/mkgp/';
    $files = array_values(array_diff(scandir($path), array('.', '..')));
+   $i = 0;
    foreach ($files as $file) {
-   echo '<a href="launchcard.php?card='.$file.'&mode=mkgp&launchmode=manual"><img style="-webkit-user-select: none;" src="cards.php?name='.$file.'&amp;mode=mkgp"></a><br><br>';
+   $path_parts = pathinfo($file);
+   if ($path_parts['extension'] == NULL && file_exists("cards/mkgp/".$file.".printdata.php")){
+   echo '<a href="launchcard.php?card='.$file.'&mode=mkgp&launchmode='.$emumode.'"><img style="width:80%" src="mkgpcards.php?name='.$file.'&amp;mode=mkgp"></a><br><br>';
+   $i++;
          }
+   }
+
+if ($i == 0){
+   echo '<b>NO CARDS FOUND</b><br><br>';
+}
+
+if ($emumode == 'manual'){
    echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="mkgp"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
 
+}
+}
+
+if ($mode == 'mkgp2'){
+   echo '<b>Emulator Mode: Mario Kart GP2 ('.$emumode.')</b></br></br>';
+if ($emumode == 'auto'){
+   echo 'Please choose a card from the list or purchase a new card in the game</br><br>';
+}
+else {
+   echo 'Please choose a card from the list or use the form to create a new card</br><br>';
+   echo 'Once the card emulator has been launched it will stay running until a new card is launched or the pi powers off</br></br>';
+}
+   $path = '/boot/config/cards/mkgp2/';
+   $files = array_values(array_diff(scandir($path), array('.', '..')));
+   $i = 0;
+   foreach ($files as $file) {
+   $path_parts = pathinfo($file);
+   if ($path_parts['extension'] == NULL && file_exists("cards/mkgp2/".$file.".printdata.php")){
+   echo '<a href="launchcard.php?card='.$file.'&mode=mkgp2&launchmode='.$emumode.'"><img style="width:80%" src="mkgpcards.php?name='.$file.'&amp;mode=mkgp2"></a><br><br>';
+   $i++;
+         }
+   }
+
+if ($i == 0){
+   echo '<b>NO CARDS FOUND</b><br><br>';
+}
+
+if ($emumode == 'manual'){
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="mkgp2"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
+
+}
 }
 
 if ($mode == 'fzero'){
@@ -155,19 +206,80 @@ else {
    foreach ($files as $file) {
    $path_parts = pathinfo($file);
    if ($path_parts['extension'] == NULL && file_exists("cards/fzero/".$file.".printdata.php")){
-   echo '<a href="launchcard.php?card='.$file.'&mode=fzero&launchmode='.$emumode.'"><img style="-webkit-user-select: none;" src="fzcards.php?name='.$file.'&amp;mode=fzero"></a><br><br>';
+   echo '<a href="launchcard.php?card='.$file.'&mode=fzero&launchmode='.$emumode.'"><img style="width:80%" src="fzcards.php?name='.$file.'&amp;mode=fzero"></a><br><br>';
    $i++;
          }
    }
 
 if ($i == 0){
-   echo '<b>NO CARDS FOUND</b>';
+   echo '<b>NO CARDS FOUND</b><br><br>';
 }
 
 if ($emumode == 'manual'){
-   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="fzero"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
-}
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="fzero"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
 
 }
+}
+
+if ($mode == 'wmmt'){
+   echo '<b>Emulator Mode: Wangan Midnight ('.$emumode.')</b></br></br>';
+if ($emumode == 'auto'){
+   echo 'Please choose a card from the list or purchase a new card in the game</br><br>';
+}
+else {
+   echo 'Please choose a card from the list or use the form to create a new card</br><br>';
+   echo 'Once the card emulator has been launched it will stay running until a new card is launched or the pi powers off</br></br>';
+}
+   $path = '/boot/config/cards/wmmt/';
+   $files = array_values(array_diff(scandir($path), array('.', '..')));
+   $i = 0;
+   foreach ($files as $file) {
+   $path_parts = pathinfo($file);
+   if ($path_parts['extension'] == NULL && file_exists("cards/wmmt/".$file.".printdata.php")){
+   echo '<a href="launchcard.php?card='.$file.'&mode=wmmt&launchmode='.$emumode.'"><img style="width:90%" src="wmmtcards.php?name='.$file.'&amp;mode=wmmt"></a><br><br>';
+   $i++;
+         }
+   }
+
+if ($i == 0){
+   echo '<b>NO CARDS FOUND</b><br><br>';
+}
+
+if ($emumode == 'manual'){
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="wmmt"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
+
+}
+}
+
+if ($mode == 'wmmt2'){
+   echo '<b>Emulator Mode: Wangan Midnight2 ('.$emumode.')</b></br></br>';
+if ($emumode == 'auto'){
+   echo 'Please choose a card from the list or purchase a new card in the game</br><br>';
+}
+else {
+   echo 'Please choose a card from the list or use the form to create a new card</br><br>';
+   echo 'Once the card emulator has been launched it will stay running until a new card is launched or the pi powers off</br></br>';
+}
+   $path = '/boot/config/cards/wmmt2/';
+   $files = array_values(array_diff(scandir($path), array('.', '..')));
+   $i = 0;
+   foreach ($files as $file) {
+   $path_parts = pathinfo($file);
+   if ($path_parts['extension'] == NULL && file_exists("cards/wmmt2/".$file.".printdata.php")){
+   echo '<a href="launchcard.php?card='.$file.'&mode=wmmt2&launchmode='.$emumode.'"><img style="width:90%" src="wmmtcards.php?name='.$file.'&amp;mode=wmmt2"></a><br><br>';
+   $i++;
+         }
+   }
+
+if ($i == 0){
+   echo '<b>NO CARDS FOUND</b><br><br>';
+}
+
+if ($emumode == 'manual'){
+   echo '<form action="launchcard.php" method="get">Create New Card:<br><br><input type="text" name="card" onfocus="this.value=\'\'" value="Enter Card Name"><input type="hidden" name="mode" value="wmmt2"><input type="hidden" name="launchmode" value="manual"><br><br><input type="submit" class="dropbtn" value="Submit"></form><br><br>';
+
+}
+}
+
 echo '</p><center></body></html>';
 ?>

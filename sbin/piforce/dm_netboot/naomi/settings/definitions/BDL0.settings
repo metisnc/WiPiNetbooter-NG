@@ -1,0 +1,45 @@
+# Virtua Tennis/Power Smash - Chunksin 06/05/2022
+Setting00: byte, read-only, default is 30
+Setting01: byte, read-only, default is 59
+Setting02: byte, read-only, default is 41
+Setting03: byte, read-only, default is 42
+Setting04: byte, read-only, default is 50
+Setting05: byte, read-only, default is 4f
+Setting06: byte, read-only, default is 57
+Setting07: byte, read-only, default is 45
+Setting08: byte, read-only, default is 52
+Setting09: byte, read-only, default is 5f
+Setting0a: byte, read-only, default is 53
+Setting0b: byte, read-only, default is 4d
+Setting0c: byte, read-only, default is 41
+Setting0d: byte, read-only, default is 53
+Setting0e: byte, read-only, default is 48
+Setting0f: byte, read-only, default is 21
+Setting10: byte, read-only, default is 21
+Difficulty: byte, default is 01
+  0 - Easy
+  1 - Normal
+  2 - Hard
+  3 - Very Hard
+Match Count 1P: byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+Match Count 2P: byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+Deuce: byte, default is 01
+  0 - Off
+  1 - On
+Tournament Mode: byte, default is 00
+  0 - Off
+  1 - On
+Setting16: byte, read-only, default is 00
+Billboard: byte, default is 01
+  0 - Off
+  1 - On

@@ -1,0 +1,13 @@
+# Under Defeat - Chunksin 08/05/2022 - Work in Progress
+Setting00: byte, read-only, default is 19
+Setting01: byte, read-only, default is 09
+Setting02: byte, read-only, default is 05
+Setting03: byte, read-only, default is 20
+Difficulty: byte, default is 01
+  0 - Easy
+  1 - Normal
+  2 - Hard
+Player Stock: byte, default is 03, values are 3 to 5
+Setting06: byte, read-only, default is 00
+Setting07: byte, read-only, default is 00
+

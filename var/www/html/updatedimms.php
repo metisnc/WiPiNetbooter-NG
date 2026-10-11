@@ -21,10 +21,37 @@ echo '</p><center></body></html>';
 $name = $_GET["name"];
 $ip = $_GET["ip"];
 $type = $_GET["type"];
+$opentarget = $_GET["opentarget"];
+$defaultgame = $_GET["defaultgame"];
+$cab = $_GET["cab"];
+$servermode = file_get_contents('/sbin/piforce/servermode.txt');
 
-$update = $name. ",". $ip. ",". $type. "\n";
+if ($defaultgame == "none"){$defaultgame = "none,none,none";}
 
+if ($opentarget == '')
+{$opentarget = 'off';}
+else{
+$filename="csv/dimms.csv";
+$string_to_replace=",on,";
+$replace_with=",off,";
+replace_string_in_file($filename, $string_to_replace, $replace_with);
+}
+
+$update = $name.",".$ip.",".$type.",".$opentarget.",".$defaultgame.",".$cab."\n";
 UpdateLine($filename, $linenum, $update);
+
+if ($servermode == 'serveron'){
+$relaymode = file_get_contents('/sbin/piforce/relaymode.txt');
+$zeromode = file_get_contents('/sbin/piforce/zeromode.txt');
+$gamearray = explode(",", $defaultgame);
+
+if ($gamearray[0] != 'none' and $gamearray[0] != 'menu'){
+$command = escapeshellcmd('sudo python3 /sbin/piforce/wipiloader.py '.$gamearray[0].' '.$ip.' '.$relaymode.' '.$zeromode.' '.$gamearray[1].' '.$gamearray[2]);
+$output = shell_exec($command . '> /dev/null 2>/dev/null &');
+}
+
+}
+
 }
 
 
@@ -66,5 +93,11 @@ if($fp){
 echo "Entry was updated successfully!";
 }
 
+function replace_string_in_file($filename, $string_to_replace, $replace_with){
+    $content=file_get_contents($filename);
+    $content_chunks=explode($string_to_replace, $content);
+    $content=implode($replace_with, $content_chunks);
+    file_put_contents($filename, $content);
+}
 
 ?>

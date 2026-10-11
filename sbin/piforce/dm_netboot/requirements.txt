@@ -1,0 +1,10 @@
+flake8
+flask
+mypy
+psutil
+pycryptodome
+pyyaml
+pillow
+PyYAML
+arcadeutils
+dragoncurses

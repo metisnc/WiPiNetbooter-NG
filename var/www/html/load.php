@@ -51,12 +51,13 @@ echo '<h1>Loading<br>'.$name.'</h1></center>';
 
 <?php
 
-$command = escapeshellcmd('sudo python /sbin/piforce/webforce.py '.$rom.' '.$dimm.' '.$relaymode.' '.$zeromode.' '.$mapping.' '.$ffb);
+$command = escapeshellcmd('sudo python3 /sbin/piforce/wipiloader.py '.$rom.' '.$dimm.' '.$relaymode.' '.$zeromode.' '.$mapping.' '.$ffb);
 $output = shell_exec($command . '> /dev/null 2>/dev/null &');
+$progressfile = '/var/log/progress_'.$dimm;
 
 $progress = 0;
 while($progress < 100) {
-    $handle = popen('sudo tail -n 1 /var/log/progress.txt', 'r');
+    $handle = popen('sudo tail -n 1 '.$progressfile, 'r');
     $progress = fgets($handle);
     if(($progress > $last && $progress < 100) || $progress == 10){
          echo '<script>';
@@ -68,7 +69,7 @@ while($progress < 100) {
     $last = $progress;
     ob_flush(); 
     flush();
-    sleep(0.1);
+    sleep(0.3);
     pclose($handle);
 }
 

@@ -1,0 +1,57 @@
+# Akatsuki Bk Ausf Achse - Chunksin 07/05/2022 
+Setting00: byte, read-only, default is 80
+Setting01: byte, read-only, default is c9
+Setting02: byte, read-only, default is 63
+Setting03: byte, read-only, default is 04
+Setting04: byte, read-only, default is 61
+Setting05: byte, read-only, default is 6b
+Setting06: byte, read-only, default is 61
+Setting07: byte, read-only, default is 62
+Setting08: byte, read-only, default is 6b
+Setting09: byte, read-only, default is 61
+Setting0a: byte, read-only, default is 63
+Setting0b: byte, read-only, default is 64
+Setting0c: byte, read-only, default is 61
+Setting0d: byte, read-only, default is 74
+Setting0e: byte, read-only, default is 61
+Setting0f: byte, read-only, default is 00
+Event Mode \\ Vs Char: byte, default is 00
+  0 - Off \\ Off
+  1 - On \\ Off
+  2 - Off \\ On
+  3 - On \\ On
+Setting11: byte, read-only, default is 00
+Setting12: byte, read-only, default is 00
+Setting13: byte, read-only, default is 00
+Game Difficulty: byte, default is 02
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+CPU Round: byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+VS Round: byte, default is 01
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+Round Time: byte, default is 02
+  0 - 60
+  1 - 70
+  2 - 80
+  3 - 90
+  4 - 99
+Practice Time Mode: byte, default is 01
+  0 - 180
+  1 - 300
+  2 - 420
+  3 - 600
+Setting19: byte, read-only, default is 00
+Setting1a: byte, read-only, default is 00
+Setting1b: byte, read-only, default is 00

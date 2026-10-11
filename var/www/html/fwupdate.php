@@ -56,7 +56,9 @@ echo '<html><body><table class="center" id="dimms">';
                 echo '<input type="hidden" name="ip" value="'.$row[1].'" />';
                 echo '<tr><td><b>Type<b></td>';
                 echo '<td>'.$row[2].'</td></tr>';
-                echo '<tr><td><b>Version</b></td><td><select name="version"><option value="4.01">4.01</option><option value="4.02">4.02</option><option value="4.03">4.03</option></select></td></tr>';
+                $fwversion = shell_exec('python3 /sbin/piforce/dm_netboot/netdimm_firmware '.$row[1]);
+                echo '<tr><td><b>Current</b></td><td>'.$fwversion.'</td>';
+                echo '<tr><td><b>Update</b></td><td><select name="version"><option value="4.01">4.01</option><option value="4.02">4.02</option><option value="4.03">4.03</option></select></td></tr>';
                 echo '</table><br>';
                 echo '<input type="submit" class="dropbtn" value="Update"></form>';
                 }

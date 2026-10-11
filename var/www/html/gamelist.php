@@ -2,7 +2,7 @@
 
 echo '<html lang="en"><head><meta charset="utf-8"><title>WiPi Netbooter</title>';
 echo '<meta name="description" content="Responsive Header Nav">';
-echo '<meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1">';
+echo '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">';
 echo '<link rel="stylesheet" href="css/sidebarstyles.css">';
 include 'menu.php';
 
@@ -25,6 +25,9 @@ $openmode = file_get_contents('/sbin/piforce/openmode.txt');
 $soundmode = file_get_contents('/sbin/piforce/soundmode.txt');
 $navmode = file_get_contents('/sbin/piforce/navmode.txt');
 $ffbmode = file_get_contents('/sbin/piforce/ffbmode.txt');
+$osmmode = file_get_contents('/sbin/piforce/osmmode.txt');
+$servermode = file_get_contents('/sbin/piforce/servermode.txt');
+$filtermode = file_get_contents('/sbin/piforce/filtermode.txt');
 
 echo '<section><center>';
 echo '<div>';
@@ -33,15 +36,16 @@ if ($navmode == "navon"){
 echo '<button onclick="topFunction()" id="rtnBtn" title="Go to top"><img src="img/rtn.png" /></button>';
 }
 
+if ($servermode == 'serveron'){
+echo '<a href="dimms.php"><img src="img/servermode.png"></a></br></br>';
+echo '<b><a href="dimms.php">Server Mode Enabled</a></b><br></div><br>';}
+else{
+
 if ($display == 'all'){
 
-?>
-
-<div class="dropdown">
-  <button onclick="SystemFunction()" class="dropbtn">System</button>
-  <div id="SystemDropdown" class="dropdown-content">
-
-<?php
+echo '<div class="dropdown">';
+echo '<button onclick="SystemFunction()" class="dropbtn">System</button>';
+echo '<div id="SystemDropdown" class="dropdown-content">';
 $unique_ids = array();
 $f = fopen('csv/romsinfo.csv', 'r');
 $headers = ($row = fgetcsv($f));
@@ -55,15 +59,13 @@ $categories = array_keys($unique_ids);
     echo '<a href="/gamelist.php?filter=system&value='.$value.'">'.$value.'</a>';
   }
 fclose($f);
-?>
- </div>
-</div>
+echo '</div>';
+echo '</div>';
+echo ' ';
 
-<div class="dropdown">
-  <button onclick="GenreFunction()" class="dropbtn">Genre</button>
-  <div id="GenreDropdown" class="dropdown-content">
-
-<?php
+echo '<div class="dropdown">';
+echo '<button onclick="GenreFunction()" class="dropbtn">Genre</button>';
+echo '<div id="GenreDropdown" class="dropdown-content">';
 $unique_ids = array();
 $f = fopen('csv/romsinfo.csv', 'r');
 $headers = ($row = fgetcsv($f));
@@ -77,16 +79,13 @@ $categories = array_keys($unique_ids);
     echo '<a href="/gamelist.php?filter=genre&value='.$value.'">'.$value.'</a>';
   }
 fclose($f);
-?>
+echo '</div>';
+echo '</div>';
+echo ' ';
 
- </div>
-</div>
-
-<div class="dropdown">
-  <button onclick="OrientationFunction()" class="dropbtn">Orientation</button>
-  <div id="OrientationDropdown" class="dropdown-content">
-
-<?php
+echo '<div class="dropdown">';
+echo '<button onclick="OrientationFunction()" class="dropbtn">Orientation</button>';
+echo '<div id="OrientationDropdown" class="dropdown-content">';
 $unique_ids = array();
 $f = fopen('csv/romsinfo.csv', 'r');
 $headers = ($row = fgetcsv($f));
@@ -100,16 +99,13 @@ $categories = array_keys($unique_ids);
     echo '<a href="/gamelist.php?filter=orientation&value='.$value.'">'.$value.'</a>';
   }
 fclose($f);
-?>
+echo '</div>';
+echo '</div>';
+echo ' ';
 
- </div>
-</div>
-
-<div class="dropdown">
-  <button onclick="ControlFunction()" class="dropbtn">Controls</button>
-  <div id="ControlDropdown" class="dropdown-content">
-
-<?php
+echo '<div class="dropdown">';
+echo '<button onclick="ControlFunction()" class="dropbtn">Controls</button>';
+echo '<div id="ControlDropdown" class="dropdown-content">';
 $unique_ids = array();
 $f = fopen('csv/romsinfo.csv', 'r');
 $headers = ($row = fgetcsv($f));
@@ -123,25 +119,39 @@ $categories = array_keys($unique_ids);
     echo '<a href="/gamelist.php?filter=controls&value='.$value.'">'.$value.'</a>';
   }
 fclose($f);
-?>
+echo '</div>';
+echo '</div>';
 
- </div>
-</div>
+echo '<br><br>';
 
-<br><br>
-
-<?php
+$lines = file('csv/dimms.csv');
+$dimmtypes = array();
+foreach($lines as $line)
+{
+    $linearray = explode(',', $line);
+    array_push($dimmtypes, $linearray[2]);
+    if ($linearray[2] == 'Sega Naomi'){array_push($dimmtypes, 'Sammy Atomiswave');}
+    if ($linearray[2] == 'Sega Naomi2'){array_push($dimmtypes, 'Sega Naomi');array_push($dimmtypes, 'Sammy Atomiswave');}
+}
 
 $files = array_values(array_diff(scandir($path), array('.', '..')));
 $games_array = array();
 $f = fopen('csv/romsinfo.csv', 'r');
    while (($row = fgetcsv($f)) !== false) {
         foreach ($row as $cell) {
+            if ($filtermode == 'filteron'){
+              if ((in_array($row[1], $files)) and ($row[12] == "Yes") and (in_array($row[0],$dimmtypes))){
+                  $games_array[strtoupper(substr($row[4],0,1))] = true;
+
+              }
+            }
+            else {
               if ((in_array($row[1], $files)) and ($row[12] == "Yes")){
                   $games_array[strtoupper(substr($row[4],0,1))] = true;
 
+              }
+            }
   }
-}
 }
 
 $alphabetUpper = range('A', 'Z');
@@ -155,6 +165,24 @@ fclose($f);
 
 echo '<br><br></div>';
 echo '<a id="anchorTOP" class="anchors"></a>';
+if ($osmmode == 'osmon'){
+$search = 'Sega Naomi';
+$naomi = 'false';
+foreach($dimmtypes as $dimm)
+{
+  if(strpos($dimm, $search) !== false)
+    $naomi = 'true';
+}
+if ($naomi == 'true'){
+echo '<div class="box1">';
+if ($openmode == 'openon'){
+echo '<a href="menulauncher.php?openmode=openon"><img src="img/menu.png"></a></br></br>';
+echo '<b><a href="menulauncher.php?openmode=openon">On Screen Menu</a></b><br></div><br>';}
+else {
+echo '<a href="menulauncher.php?openmode=openoff"><img src="img/menu.png"></a></br></br>';
+echo '<b><a href="menulauncher.php?openmode=openoff">On Screen Menu</a></b><br></div><br>';}
+}
+}
 
 
    $lastname = 'aaaa';
@@ -163,6 +191,35 @@ echo '<a id="anchorTOP" class="anchors"></a>';
    $f = fopen($csvfile, "r");
    while (($row = fgetcsv($f)) !== false) {
         foreach ($row as $cell) {
+            if ($filtermode == 'filteron'){
+              if ((in_array($row[1], $files)) and ($row[12] == "Yes") and (in_array($row[0],$dimmtypes))){
+                  echo '<div class="box1">';
+                  $i++;
+                  $system = $row[0];
+                  $filename = $row[1];
+                  $image = $row[2];
+                  $gamename = $row[4];
+                  $mapping = $row[14];
+                  $ffb = $row[15];
+                  $lastletter = strtoupper(substr($lastname,0,1));
+                  $thisletter = strtoupper(substr($gamename,0,1));
+                  if (strcmp($lastletter, $thisletter) < 0 ){
+                       echo '<a id="anchor'.$thisletter.'" class="anchors"></a>';
+                  }
+                  echo '<a id="anchor'.$gamename.'" class="anchors"></a>';                  
+                  $lastname = $gamename;
+                  if ($menumode == 'advanced'){
+                  echo '<a href="gamelist.php?filename='.$row[1].'"><img src="images/'.$image.'"></a></br></br>';
+                  if ($row[13] == "Yes"){echo '<b><div class="parent"><a href="gamelist.php?filename='.$row[1].'">'.$gamename.'</a></b><img src="img/fave.png" class="over-img"/></div>';}
+                  else {echo '<b><a href="gamelist.php?filename='.$row[1].'">'.$gamename.'</a></b><br>';}}
+                  else {
+                  echo '<a href="loadcheck.php?rom='.$filename.'&name='.$gamename.'&system='.$system.'&mapping='.$mapping.'&ffb='.$ffb.'"><img src="images/'.$image.'"></a></br></br>';
+                  if ($row[13] == "Yes"){echo '<b><div class="parent"><a href="loadcheck.php?rom='.$filename.'&name='.$gamename.'&system='.$system.'&mapping='.$mapping.'&ffb='.$ffb.'">'.$gamename.'</a></b><img src="img/fave.png" class="over-img"/></div></br></br>';}
+                  else {echo '<b><a href="loadcheck.php?rom='.$filename.'&name='.$gamename.'&system='.$system.'&mapping='.$mapping.'&ffb='.$ffb.'">'.$gamename.'</a><br>';}}
+                  echo '</div><br>';
+                  break;
+              }}
+            else{
               if ((in_array($row[1], $files)) and ($row[12] == "Yes")){
                   echo '<div class="box1">';
                   $i++;
@@ -189,7 +246,7 @@ echo '<a id="anchorTOP" class="anchors"></a>';
                   else {echo '<b><a href="loadcheck.php?rom='.$filename.'&name='.$gamename.'&system='.$system.'&mapping='.$mapping.'&ffb='.$ffb.'">'.$gamename.'</a><br>';}}
                   echo '</div><br>';
                   break;
-              }
+              }}
          }
      }
    fclose($f);
@@ -436,8 +493,7 @@ if ($display == "faves" && $filename == null) {
       echo '<div><a href="gamelist.php?display=all"></div>NO FAVOURITES FOUND</a></div>';
    }
 }
-
-
+}
 echo '</div>';
 
 ?>

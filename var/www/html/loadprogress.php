@@ -5,6 +5,7 @@ echo '<html lang="en"><head><meta charset="utf-8"><title>WiPi Netbooter</title>'
 echo '<link rel="stylesheet" href="css/sidebarstyles.css">';
 
 $name = $_GET["name"];
+$dimm = $_GET["dimm"];
 
 echo '<p>';
 ?>
@@ -21,7 +22,8 @@ echo '<h1><a href="gamelist.php?display=all#anchor'.$name.'">Loading<br>'.$name.
 
 <?php
 
-$handle = popen('sudo tail -n 1 /var/log/progress.txt', 'r');
+$progressfile = '/var/log/progress_'.$dimm;
+$handle = popen('sudo tail -n 1 '.$progressfile, 'r');
 $progress = fgets($handle);
 pclose($handle);
 
@@ -30,7 +32,7 @@ if ((is_int($progress) && $progress < 100) || $progress != 'COMPLETE'){
     echo 'var elem = document.getElementById("myBar");';
     echo 'elem.style.width = '.$progress.' + "%";';
     echo 'elem.innerHTML = '.$progress.'  + "%";';
-    echo 'setTimeout(function(){window.location="loadprogress.php?name='.$name.'";}, 800)';
+    echo 'setTimeout(function(){window.location="loadprogress.php?name='.$name.'&dimm='.$dimm.'";}, 500)';
     echo '</script>';
 }
 else{

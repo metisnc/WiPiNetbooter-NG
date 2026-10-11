@@ -1,0 +1,37 @@
+# Gigawing 2 - Chunksin 08/05/2022
+Setting00: byte, read-only, default is 32
+Setting01: byte, read-only, default is 4b
+Setting02: byte, read-only, default is 43
+Setting03: byte, read-only, default is 42
+Setting04: byte, read-only, default is 00
+Difficulty: byte, default is 03
+  0 - 1 (Easy)
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+  6 - 7
+  7 - 8 (Hard)
+Continue: byte, default is 01
+  0 - Off
+  1 - On
+Sound Mode: byte, default is 01
+  0 - Mono
+  1 - Stereo
+Setting08: byte, read-only, default is 01
+Demo Sound Half: byte, default is 01
+  0 - Off
+  1 - On
+Ship Stock: byte, default is 02
+  0 - 1
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+  6 - 7
+  7 - 8
+  8 - 9
+Force Bomb Stock: byte, default is 02, values are 0 to 5
+

@@ -55,8 +55,30 @@ import filecmp
 import shutil
 import shortuuid
 
+def exists(path):
+    try:
+        os.stat(path)
+    except OSError:
+        return False
+    return True
+
+pidpath = '/sbin/piforce/card_emulator/pid.txt'
+
+if exists(pidpath):
+    with open(pidpath, "r") as pidfile:
+        lastpid = pidfile.readline()
+else:
+    lastpidfile = open(pidpath, "w")
+    lastpidfile.close()
+
+try:
+    print('---> Previous process PID:',lastpid)
+    os.kill(int(lastpid), 9)
+except:
+    pass
+
 currentpid = os.getpid()
-bashCommand1 = 'sudo echo -n '+str(currentpid)+' | tee /sbin/piforce/card_emulator/pid.txt'
+bashCommand1 = 'sudo echo -n '+str(currentpid)+' | tee '+pidpath
 os.system(bashCommand1)
 
 nocard = True
@@ -308,7 +330,7 @@ def main():
 
     try:
         while True:
-            
+            sleep(0.001)
             new_data = comport['ser'].read()
             if len(new_data) > 0:
                 comport['buffer'] += new_data
@@ -728,13 +750,14 @@ def main():
                             WriteBackFile.close()
                             if CopyNFCphp: # If the data has come from a new unknown NFC card - move its associated printdata php file to the correct location
                                 print('---> Moving NFC Card print data file')
-                                shutil.move("/var/log/printdata/NFC_Card.printdata.php", PrintDataFile)
+                                shutil.copy("/var/log/printdata/NFC_Card.printdata.php", PrintDataFile)
+                                os.remove("/var/log/printdata/NFC_Card.printdata.php")
                                 CopyNFCphp = False # Reset CopyNFCphp variable for next card swipe
                             if (NFCCardWrite == 'yes'):
                                 print('---> Writing card data to NFC card')
                                 print('---> NFC data file:', CardFileName)
                                 print('---> NFC print file:', PrintDataFile)
-                                cp = subprocess.Popen(["python3","/sbin/piforce/card_emulator/nfcwrite.py", CardFileName, PrintDataFile])
+                                cp = subprocess.Popen(["python3","/sbin/piforce/card_emulator/nfcwrite.py", "-m", "sega", "-f", CardFileName, "-p", PrintDataFile])
                             ReadInput=""
                             StepNum=0
                             CardLoaded =0

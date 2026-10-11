@@ -27,6 +27,7 @@ if os.path.exists(phppath) and os.path.getsize(rawprintfile) < 160:
         delta = "true"
         phpfile = open(phppath)
         lines = phpfile.readlines()
+        driverdata = str(''.join(lines[1].split('"')[1::2]))
         areadata = list(''.join(lines[5].split('"')[1::2]))
 else:
         cardimage = random.choice(os.listdir("/var/www/html/cardimages/idas"))
@@ -55,13 +56,13 @@ f.close()
 carinfo = cardtoend[0:-4]
 
 if ("1B6701" in carinfo):
-        carinfo = carinfo.replace("1B6701","20494920")
+        carinfo = carinfo.replace("1B6701","2016")
 if ("1B6702" in carinfo):
-        carinfo = carinfo.replace("1B6702","2049494920")
+        carinfo = carinfo.replace("1B6702","2017")
 if ("1B6703" in carinfo):
-        carinfo = carinfo.replace("1B6703","20495620")
+        carinfo = carinfo.replace("1B6703","2018")
 if ("1B6704" in carinfo):
-        carinfo = carinfo.replace("1B6704","2056494920")
+        carinfo = carinfo.replace("1B6704","201B")
 if ("1B6705" in carinfo):
         areadata[0] = '1'
 if ("1B6706" in carinfo):
@@ -78,19 +79,29 @@ if ("1B670B" in carinfo):
         areadata[6] = '1'
 if ("1B670C" in carinfo):
         areadata[7] = '1'
-if ("1B670C" in carinfo):
+if ("1B670D" in carinfo):
         areadata[8] = '1'
 if ("1B670E" in carinfo):
-        carinfo = carinfo.replace("1B670E","19")
+        carinfo = carinfo.replace("1B670E","")
 if ("1B670F" in carinfo):
-        carinfo = carinfo.replace("1B670F","1A")
+        carinfo = carinfo.replace("1B670F","")
 if ("1B6710" in carinfo):
-        carinfo = carinfo.replace("1B6710","1B")
+        carinfo = carinfo.replace("1B6710","")
 if ("8187" in carinfo):
         carinfo = carinfo.replace("8187","1C")
 
 cardata = carinfo.split("0D")
 if (delta == "true"):
+        try:
+            driverdata.encode('ascii')
+        except UnicodeEncodeError:
+            pass
+        else:
+            drivername = ''
+            for c in driverdata.rstrip():
+                newc = chr(ord(c)+65248)
+                drivername+=newc
+            replace_line(phppath, 1, '$drivername="'+drivername+'";\n')
         areas = ''.join(areadata)
         replace_line(phppath, 5, '$areas="'+areas+'";\n')
 else:
@@ -98,16 +109,8 @@ else:
         car2 = codecs.decode(cardata[1].replace('2020',''),'hex').decode()
         areas = ''.join(areadata)
         keyno = codecs.decode(keystring.replace("1B670E",""),'hex').decode()
-        namestring = name.replace('2020','20')
-        test = codecs.decode(namestring,'hex')
-        driver = codecs.decode(test,'shift-jis')
-        drivername = ''
-        for c in driver:
-	        if (ord(c)>256):
-		        newc = chr(ord(c)-65248)
-		        drivername+=newc
-	        else:
-		        drivername+=c
+        driverhex = codecs.decode(name,'hex')
+        drivername = codecs.decode(driverhex,'shift-jis')
         print ("Driver Name: "+drivername)
         print ("Car Line 1: "+car1)
         print ("Car Line 2: "+car2)

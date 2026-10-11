@@ -11,19 +11,18 @@ $ip = $_GET["ip"];
 $version = $_GET["version"];
 
 if ($version == '4.01'){
-$fwfile = 'FW_Netdimm_401.bin';}
+$fwfile = 'FW_Netdimm_401.bin.gz';}
 if ($version == '4.02'){
-$fwfile = 'FW_Netdimm_402.bin';}
+$fwfile = 'FW_Netdimm_402.bin.gz';}
 if ($version == '4.03'){
-$fwfile = 'FW_Netdimm_403.bin';}
+$fwfile = 'FW_Netdimm_403.bin.gz';}
 
 echo '<p><b>'.$version.' Firmware upgrade file sent to '.$ip.'</p>';
 echo '<p>Follow on-screen instructions to upgrade</b></p>';
 
-$cmd = 'sudo python /sbin/piforce/webforcefw.py '.$fwfile.' '.$ip;
+$cmd = 'sudo python3 /sbin/piforce/wipiloaderfw.py '.$fwfile.' '.$ip;
 $command = escapeshellcmd($cmd);
 $output = shell_exec($command);
-echo $output;
 
 echo '</p><center></body></html>';
 

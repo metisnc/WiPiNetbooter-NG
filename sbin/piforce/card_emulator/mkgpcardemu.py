@@ -5,6 +5,8 @@ Wangan Midnight Maximum Tune - Card Reader Emulator v1.0
 Programmed by: winteriscoming
 Special thanks to: MetalliC
 
+Additional code by: Chunksin
+
 Card command constants referenced from Dolphin emulator Triforce branch.
 
 Serial interface referenced from jpnevulator.py script.
@@ -42,10 +44,115 @@ from datetime import datetime as dt
 import binascii
 import serial
 import os
+import subprocess
+import threading
+import glob
+from queue import Queue
+from pathlib import Path
+from time import sleep
+import filecmp
+import shutil
+import shortuuid
+
+def exists(path):
+    try:
+        os.stat(path)
+    except OSError:
+        return False
+    return True
+
+pidpath = '/sbin/piforce/card_emulator/pid.txt'
+
+if exists(pidpath):
+    with open(pidpath, "r") as pidfile:
+        lastpid = pidfile.readline()
+else:
+    lastpidfile = open(pidpath, "w")
+    lastpidfile.close()
+
+try:
+    print('---> Previous process PID:',lastpid)
+    os.kill(int(lastpid), 9)
+except:
+    pass
 
 currentpid = os.getpid()
-bashCommand1 = 'sudo echo -n '+str(currentpid)+' | tee /sbin/piforce/card_emulator/pid.txt'
+bashCommand1 = 'sudo echo -n '+str(currentpid)+' | tee '+pidpath
 os.system(bashCommand1)
+
+nocard = True
+stop_thread = False
+if not os.path.exists('/var/log/activecard'):
+    print('---> Creating temporary drop folder as /var/log/activecard')
+    os.makedirs('/var/log/activecard')
+if not os.path.exists('/var/log/printdata'):
+    print('---> Creating temporary data folder as /var/log/printdata')
+    os.makedirs('/var/log/printdata')
+if not os.path.exists('/var/log/cardcheck'):
+    print('---> Creating temporary data folder as /var/log/cardcheck')
+    os.makedirs('/var/log/cardcheck')
+
+def HexBytestoString(string):
+    length=0;
+    length=len(string)
+    crc = 0
+    stringval = ""
+    fullstring=""
+    for i in range (0,length,1):
+        stringval = str(hex(string[i])) +'\\'
+        fullstring=fullstring+stringval
+        #print(hex(num))
+    return fullstring
+
+def autogen():
+    BasePath = "/var/log/activecard/"
+    BaseName = BasePath+"card"
+    Suffix = shortuuid.ShortUUID().random(length=6)
+    NewCardFileName = "_".join([BaseName, Suffix]) # Temp card file name generated
+    return NewCardFileName
+
+def emptydropfolder():
+    DropFolderGlobPath = "/var/log/activecard/*"
+    CardFiles = glob.glob(DropFolderGlobPath) # Empty the drop folder and printdata folder
+    for f in CardFiles:
+        os.remove(f)
+        
+def emptyprintfolder():
+    PrintFolderGlobPath = "/var/log/printdata/*"
+    PrintFiles = glob.glob(PrintFolderGlobPath)
+    for f in PrintFiles:
+        os.remove(f)
+
+def cardpoll(threadname, q): # Card polling thread checks drop folder for card file
+    global nocard
+    global stop_thread
+    DropFolderGlobPath = "/var/log/activecard/*" # Drop folder to monitor
+    while True:
+        while nocard is True:
+            if glob.glob(DropFolderGlobPath):
+                DropFile = glob.glob(DropFolderGlobPath)
+                CardFileName = DropFile[0] # Update CardFileName to be original card file
+                print('---> File detected in drop folder:', CardFileName)
+                with open(CardFileName, "rb") as in_file: # Open original card file and read contents
+                    CardBytes = in_file.read()
+                    if len(CardBytes) == 77:
+                        print('---> Card data is correct length for Mario Kart')
+                        q.put(CardBytes) # Send card contents to the cardpoll queue
+                    else:
+                        print('---> Card data invalid length for Mario Kart')
+                        print('---> Clearing card file from drop folder')
+                        os.remove(CardFileName)
+                nocard = False
+            sleep(0.1)
+            if stop_thread:
+                break
+        while nocard is False:
+            if not glob.glob(DropFolderGlobPath):
+                print("---> Drop folder is empty")
+                nocard = True
+            sleep(1)
+            if stop_thread:
+                break
 
 try:
     clock = time.perf_counter
@@ -98,8 +205,8 @@ def ValidCommand(CommandString):
     if CommandString == "80": return 1
     return 0
     
-def CardTranslationWMMT(ChihiroString,CardFileName):
-    CARDString = ChihiroString[ChihiroString.find("02 4E 53 00 00 00 30 31 30")+27: ChihiroString.find("02 4E 53 00 00 00 30 31 30") +27 + 207]
+def CardTranslation(TriforceString,CardFileName,Mode):
+    CARDString = TriforceString[TriforceString.find("02 4E 53 00 00 00 30 31 30")+27: TriforceString.find("02 4E 53 00 00 00 30 31 30") +27 + 207]
     CardCRC = 0
     CARDString = "4B 33 31 30 30 " + CARDString + "03"
     i=0
@@ -119,6 +226,8 @@ def CardTranslationWMMT(ChihiroString,CardFileName):
         
     CardBytes = b""
     CardBytes = bytearray(CardValueList)
+    
+    CardFileName = '/boot/config/cards/'+Mode+'/'+os.path.basename(CardFileName)
 
     with open(CardFileName, "wb") as out_file:
         out_file.write(CardBytes)
@@ -128,7 +237,7 @@ def CardTranslationWMMT(ChihiroString,CardFileName):
         CardBytes = in_file.read()
     print ("Read in Card Data from " + CardFileName)
     
-    return CardBytes
+    return CardBytes, CardFileName
 
 def main():
     CardBytes = b""
@@ -139,10 +248,27 @@ def main():
     HaveCard = 0
     StepNum = 0
     CleanStep = 0
+    Init = 1
+    CardLoaded = 0
+    GotNewCardData = 0
+    Ejected = 0
+    LoadCardStepNum = 0
+    NewCardFileName = autogen()
+    DropFolderGlobPath = "/var/log/activecard/*"
+    PrintFolderGlobPath = "/var/log/printdata/*"
+    DropFolderPath = "/var/log/activecard/"
+    CardFolderRoot = "/boot/config/cards"
+    NFCCardFound = False
+    NFCCardMatch = False
+    NFCCardWrite = ""
+    CardWriteFlag = False
+    CopyNFCphp = False
+    rawfilename = ""
     
     parser = argparse.ArgumentParser()
     parser.add_argument('-cp', '--comport', type=port_def, metavar='COMPORT', help="The serial device. Example: -t COM1")
     parser.add_argument('-f', '--cardfile', help='Name of card file to load. Example: -f CardHexFile')
+    parser.add_argument('-m', '--mode', help='Mode of MKGP card emulator. Example: -m mkgp or -m mkgp2')
     
     args = parser.parse_args()
 
@@ -151,13 +277,24 @@ def main():
         sys.exit(0)
         
     if not args.cardfile:
-        parser.error('Please specify a Card file name!  Example: -f CARDFILE.HEX')
+        print('---> No Card file name provided, using autogen and switching to real time mode') # If no card file name specified default to autogen
+        CardFileName = NewCardFileName
+    else:
+        CardFileName = args.cardfile
+
+    if not args.mode:
+        parser.error('Please specify an ID mode! Example: -m -m mkgp or -m mkgp2')
         sys.exit(0)
 
-    CardFileName = ""
+    CardFiles = glob.glob(DropFolderGlobPath) # Clear out any existing files from the drop folder before the polling queue starts up
+    for f in CardFiles:
+        os.remove(f)
 
-    CardFileName = args.cardfile
+    PrintFiles = glob.glob(PrintFolderGlobPath) # Clear out any existing files from the printdata folder
+    for f in PrintFiles:
+        os.remove(f)
     
+    mkgpmode = args.mode
     comport = args.comport
     comport['alias'] = "Triforce"
     comport['buffer'] = b''
@@ -168,28 +305,31 @@ def main():
     
     print ("COM port opened and named:", comport['alias'])
     #print("CTS:", comport['ser'].getCTS())
+    
+    cardpollq = Queue() # Card polling queue defined and started
+    cardpollthread = threading.Thread(target=cardpoll, args=("CardPollingThread", cardpollq))
+    cardpollthread.daemon = True
+    cardpollthread.start()
 
     try:
         with open(CardFileName, "rb") as in_file:
             CardBytes = in_file.read()
-        print ("Read in Card Data from " + CardFileName)
+        print ("---> Read in Card Data from " + CardFileName)
         
         if CardBytes == b"":
-            print (CardFileName + " card file is empty.  You will have to select to create a new card in the game.")
+            print ("---> " + CardFileName + " card file is empty.  You will have to select to create a new card in the game.")
             HaveCard=0
         else:
-            print (CardFileName + " appears to contain data.  This card data will be loaded when a game is started.")
+            print ("---> " + CardFileName + " appears to contain data.  This card data will be loaded when a game is started.")
             HaveCard=1
     except:
-        with open(CardFileName, "wb") as out_file:
-            out_file.write(CardBytes)
-        print (CardFileName + " not found.  Created " + CardFileName + ". You will have to select to create a new card in the game.")
+        print ("---> New random filename " + CardFileName + " generated. It will be available for purchase as a new card in the game.")
         HaveCard=0
     
 
     try:
         while True:
-            
+            sleep(0.001)
             new_data = comport['ser'].read()
             if len(new_data) > 0:
                 comport['buffer'] += new_data
@@ -209,6 +349,38 @@ def main():
                     line += '\n'
                     
                     sys.stdout.write(line)
+                    
+                    if not cardpollq.empty(): # Check cardpoll queue for data
+                        CardBytes = cardpollq.get_nowait()
+                        CardData = CardBytes
+                        DropFile = glob.glob(DropFolderGlobPath)
+                        if (os.path.basename(DropFile[0]) == 'NFC_Card'): # If the dropped file is called NFC_Card search for existing copy
+                            NFCCardFound = True
+                            print('---> NFC Data file detected, checking for match')
+                            for root, subdirectories, files in os.walk(CardFolderRoot):
+                                for file in files:
+                                    if not NFCCardMatch:
+                                        if filecmp.cmp(DropFile[0], os.path.join(root, file), shallow=False) and not NFCCardMatch:
+                                            CardFileName = DropFolderPath+file
+                                            shutil.move(DropFile[0], CardFileName)
+                                            NFCCardMatch = True
+                                            print('---> Match found locally for NFC data:', CardFileName)
+                                            
+                            if NFCCardFound and not NFCCardMatch:
+                                CardFileName = NewCardFileName # No match found for the NFC data so treat as a new card - php data to be handled at card save
+                                shutil.move(DropFile[0], NewCardFileName)
+                                print('---> No match found locally for NFC data')
+                                print('---> Card will be treated as autogen with existing PHP data')
+                                CopyNFCphp = True # Set a flag for the php data to be copied out at save time                                
+                        else:
+                            CardFileName = DropFile[0] # Update CardFileName
+
+                        NFCCardFound = False # Reset the NFCCard variables for the next card swipe
+                        NFCCardMatch = False
+                        print('---> Card file detected:', CardFileName)
+                        print('---> Card file read into memory')
+                        print('---> Card file processed from drop folder')
+                        HaveCard = 1
 
                     if len(ReadInput)>9:
                         CurrentCommand = CommandCode(ReadInput)
@@ -216,6 +388,19 @@ def main():
                         print ("Command Code is: " + CurrentCommand + ": " +CommandLookup(CurrentCommand))
                         if CurrentCommand == CARD_CLEAN_CARD:
                             CleanStep=0
+                        if CurrentCommand == CARD_WRITE_TEXT:
+                            rawprintpath = '/var/log/printdata/'
+                            rawfilename = rawprintpath+os.path.basename(CardFileName)+".printdata"
+                            rawfile = open(rawfilename, "w")
+                            rawcardoutput = ReadInput.lstrip()
+                            rawfile.write(rawcardoutput)
+                            rawfile.close()
+                            print('---> Print data detected and exported for processing')
+                            print('---> Data exported: '+rawcardoutput)
+                            if (rawfilename != ""):
+                                cp = subprocess.run(["python3", "/sbin/piforce/card_emulator/mkgp_card_data.py", "-m", mkgpmode, "-f", rawfilename])
+                                rawfilename = ""
+                                print('---> Card print data processed')
 
                     if ValidCommand(CurrentCommand) and len(ReadInput)>9:
                         print ("Reader Emulator: Acknowledging:  06")
@@ -305,10 +490,11 @@ def main():
                     if CurrentCommand == CARD_WRITE and "05" in ReadInput:
                         output =b"\x02\x06\x53\x31\x30\x30\x03\x67"
                         print ("Received new card data!")
-                        CardBytes= CardTranslationWMMT(PriorCommand,CardFileName)
+                        CardBytes, CardFileName = CardTranslation(PriorCommand,CardFileName,mkgpmode)
                         print (CardBytes)
                         print ("Reader Emulator: Sending: CARD_WRITE Command(53) Reply: 02 06 53 31 30 30 03 67")
                         comport['ser'].write(output)
+                        CardWriteFlag = True
                         ReadInput=""
                         
                     if CurrentCommand == CARD_WRITE_TEXT and "05" in ReadInput:
@@ -321,9 +507,31 @@ def main():
                         output =b"\x02\x06\x80\x30\x30\x30\x03\xB5"
                         print ("Reader Emulator: Sending: CARD_80 Command(80) Reply - CARD EJECTED: 02 06 80 30 30 30 03 B5")
                         comport['ser'].write(output)
-                        ReadInput=""
+                        PrintDataFile = "/var/www/html/cards/"+mkgpmode+"/"+os.path.basename(CardFileName)+".printdata.php"
+                        WriteBackFile = open('/sbin/piforce/nfcwriteback.txt') # Check NFC writeback setting
+                        NFCCardWrite = WriteBackFile.readline()
+                        WriteBackFile.close()
+                        if (CopyNFCphp and CardWriteFlag): # If the data has come from a new unknown NFC card - move its associated printdata php file to the correct location
+                            print('---> Moving NFC Card print data file')
+                            shutil.copy("/var/log/printdata/NFC_Card.printdata.php", PrintDataFile)
+                            os.remove("/var/log/printdata/NFC_Card.printdata.php")
+                            CopyNFCphp = False # Reset CopyNFCphp variable for next card swipe
+                        if (NFCCardWrite == 'yes' and CardWriteFlag):
+                            print('---> Writing card data to NFC card')
+                            print('---> NFC data file:', CardFileName)
+                            print('---> NFC print file:', PrintDataFile)
+                            cp = subprocess.Popen(["python3","/sbin/piforce/card_emulator/nfcwrite.py", "-m", "namco", "-f", CardFileName, "-p", PrintDataFile])
                         StepNum=0
-                        HaveCard=1
+                        CardLoaded =0
+                        GotNewCardData=0
+                        Ejected =1
+                        HaveCard = 0
+                        emptydropfolder() # Empty the drop folder as card has been ejected
+                        CardBytes = b"" # Reset CardBytes
+                        CardFileName = autogen() # Set CardFileName to new autogen name
+                        print("---> New card name generated: " + CardFileName)
+                        CardWriteFlag = False
+                        ReadInput=""
 
                     if HaveCard==0:
                         if CurrentCommand == CARD_READ and "05" in ReadInput:

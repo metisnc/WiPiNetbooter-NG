@@ -1,0 +1,55 @@
+# Capcom vs SNK Millenium Fight - Chunksin 07/05/2022
+Setting00: byte, read-only, default is 30
+Setting01: byte, read-only, default is 54
+Setting02: byte, read-only, default is 42
+Setting03: byte, read-only, default is 42
+Setting04: byte, read-only, default is 00
+Sound Mode: byte, default is 01
+  0 - Mono
+  1 - Stereo
+Demo Sound Half: byte, default is 00
+  0 - Off
+  1 - On
+Continue: byte, read-only if Event is 1, default is 1 if Event is 0, default is 0 if Event is 1
+  0 - Off
+  1 - On
+Setting08: byte, read-only, default is 00
+Difficulty: byte, default is 01
+  0 - 1 (Easy)
+  1 - 2
+  2 - 3
+  3 - 4
+  4 - 5
+  5 - 6
+  6 - 7
+  7 - 8 (Hard)
+Damage Level: byte, default is 01
+  0 - 1 (Low)
+  1 - 2
+  2 - 3
+  3 - 4 (High)
+Timer Speed: byte, default is 01
+  0 - 1 (Slow)
+  1 - 2
+  2 - 3
+  3 - 4 (Fast)
+VM Kit Type: byte, default is 00
+  0 - No Use
+  1 - Sega
+  2 - Capcom
+VM Write: byte, default is 00
+  0 - Off
+  1 - On
+Game Speed: byte, default is 00
+  0 - Free Select
+  1 - Normal
+  2 - Turbo
+Event: byte, default is 00
+  0 - Off
+  1 - On
+Join-In: byte, default is 00
+  0 - On
+  1 - Off
+Setting11: byte, read-only, default is 00
+Setting12: byte, read-only, default is 00
+Setting13: byte, read-only, default is 00

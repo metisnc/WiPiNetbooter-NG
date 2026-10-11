@@ -1,0 +1,21 @@
+# Cannon Spike - Chunksin 05/05/2022
+Setting00: byte, read-only, default is 42
+Setting01: byte, read-only, default is 42
+Setting02: byte, read-only, default is 55
+Setting03: byte, read-only, default is 30
+Sound Mode: byte, default is 00, 0 - Stereo, 1 - Mono
+Setting05: byte, read-only, default is 00
+Demo Sound Half: byte, default is 01, 1 - On, 0 - Off
+Setting07: byte, read-only, default is 00
+Setting08: byte, read-only, default is 00
+Setting09: byte, read-only, default is 00
+Game Difficulty: byte, default is 01, 0 - Easy, 1 - Normal, 2 - Hard, 3 - Very Hard
+Setting0b: byte, read-only, default is 00
+Initial Vitality: byte, default is 01, 0 - 9, 1 - 10, 2 - 11
+Setting0d: byte, read-only, default is 00
+Continue: byte, default is 01, 1 - On, 0 - Off
+Setting0f: byte, read-only, default is 00
+Setting10: byte, read-only, default is 00
+Setting11: byte, read-only, default is 00
+Setting12: byte, read-only, default is 00
+Setting13: byte, read-only, default is 00

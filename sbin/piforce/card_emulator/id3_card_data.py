@@ -27,6 +27,7 @@ if os.path.exists(phppath) and os.path.getsize(rawprintfile) < 160:
         delta = "true"
         phpfile = open(phppath)
         lines = phpfile.readlines()
+        driverdata = str(''.join(lines[1].split('"')[1::2]))
         areadata = list(''.join(lines[5].split('"')[1::2]))
         racerdata = int(''.join(lines[6].split('"')[1::2]))
 else:
@@ -57,23 +58,23 @@ f.close()
 carinfo = cardtoend[0:-4]
 
 if ("1B6701" in carinfo):
-        carinfo = carinfo.replace("1B6701","0F")
+        carinfo = carinfo.replace("1B6701","")
 if ("1B6702" in carinfo):
-        carinfo = carinfo.replace("1B6702","10")
+        carinfo = carinfo.replace("1B6702","")
 if ("1B6703" in carinfo):
-        carinfo = carinfo.replace("1B6703","11")
+        carinfo = carinfo.replace("1B6703","")
 if ("1B6704" in carinfo):
-        carinfo = carinfo.replace("1B6704","20494920")
+        carinfo = carinfo.replace("1B6704","2016")
 if ("1B6705" in carinfo):
-        carinfo = carinfo.replace("1B6705","2049494920")
+        carinfo = carinfo.replace("1B6705","2017")
 if ("1B6706" in carinfo):
-        carinfo = carinfo.replace("1B6706","20495620")
+        carinfo = carinfo.replace("1B6706","2018")
 if ("1B6707" in carinfo):
-        carinfo = carinfo.replace("1B6707","205620")
+        carinfo = carinfo.replace("1B6707","2019")
 if ("1B6708" in carinfo):
-        carinfo = carinfo.replace("1B6708","20564920")
+        carinfo = carinfo.replace("1B6708","201A")
 if ("1B6709" in carinfo):
-        carinfo = carinfo.replace("1B6709","2056494920")
+        carinfo = carinfo.replace("1B6709","201B")
 if ("1B670A" in carinfo):
         areadata[0] = '1'
 if ("1B670B" in carinfo):
@@ -93,14 +94,24 @@ if ("1B6711" in carinfo):
 if ("1B6712" in carinfo):
         areadata[8] = '1'
 if ("1B6713" in carinfo):
-        carinfo = carinfo.replace("1B6709","1B")
+        carinfo = carinfo.replace("1B6713","")
 if ("1B6714" in carinfo):
-        carinfo = carinfo.replace("1B6709","1B")
+        carinfo = carinfo.replace("1B6714","")
 if ("8187" in carinfo):
-        carinfo = carinfo.replace("8187","07")
+        carinfo = carinfo.replace("8187","1C")
 
 cardata = carinfo.split("0D")
 if (delta == "true"):
+        try:
+            driverdata.encode('ascii')
+        except UnicodeEncodeError:
+            pass
+        else:
+            drivername = ''
+            for c in driverdata.rstrip():
+                newc = chr(ord(c)+65248)
+                drivername+=newc
+            replace_line(phppath, 1, '$drivername="'+drivername+'";\n')
         areas = ''.join(areadata)
         replace_line(phppath, 5, '$areas="'+areas+'";\n')
         if len(cardata) > 5:
@@ -112,16 +123,8 @@ else:
         areas = ''.join(areadata)
         racerlevel = racerdata
         keyno = codecs.decode(keystring.replace("1B6701",""),'hex').decode()
-        namestring = name.replace('2020','20')
-        test = codecs.decode(namestring,'hex')
-        driver = codecs.decode(test,'shift-jis')
-        drivername = ''
-        for c in driver:
-	        if (ord(c)>256):
-		        newc = chr(ord(c)-65248)
-		        drivername+=newc
-	        else:
-		        drivername+=c
+        driverhex = codecs.decode(name,'hex')
+        drivername = codecs.decode(driverhex,'shift-jis')
         print ("Driver Name: "+drivername)
         print ("Car Line 1: "+car1)
         print ("Car Line 2: "+car2)

@@ -29,14 +29,18 @@ $nfcmode = file_get_contents('/sbin/piforce/nfcmode.txt');
 if ($mode == 'main'){
    echo 'Please select the card reader emulator mode from the list below</br></br>';
    if ($nfcmode == 'nfcon'){
-       echo 'You can use the buttons below to check the contents of an NFC card or wipe it ready for use<br><br>';
+       echo 'You can use the buttons below to check the contents of an NFC card, wipe it ready for use or eject it from the card emulator<br><br>';
        echo 'Press the button then place the card on the reader within 10 seconds to scan it<br><br>';
-       echo '<br><p><a href="cardactions.php?command=nfc_check" style="font-weight:normal" class="dropbtn">Check NFC Card</a>  <a href="cardactions.php?mode=main&command=nfcwipe" style="font-weight:normal" class="dropbtn">Wipe NFC Card</a></p><br>';
+       echo '<br><p><a href="cardactions.php?command=nfc_check" style="font-weight:normal" class="dropbtn">Check Card</a>  <a href="cardactions.php?mode=main&command=nfcwipe" style="font-weight:normal" class="dropbtn">Wipe Card</a>  <a href="cardactions.php?mode=main&command=nfceject" style="font-weight:normal" class="dropbtn">Eject Card</a></p><br>';
    }
    echo '<a href="cardmanagement.php?mode=idas"><img src="images/initd.png"></a></br><br>';
    echo '<a href="cardmanagement.php?mode=id2"><img src="images/initd2.png"></a></br><br>';
    echo '<a href="cardmanagement.php?mode=id3"><img src="images/initdv3e.png"></a></br><br>';
    echo '<a href="cardmanagement.php?mode=fzero"><img src="images/FZ.png"></a></br><br>';
+   echo '<a href="cardmanagement.php?mode=mkgp"><img src="images/mkgp.png"></a></br><br>';
+   echo '<a href="cardmanagement.php?mode=mkgp2"><img src="images/mkgp2.png"></a></br><br>';
+   echo '<a href="cardmanagement.php?mode=wmmt"><img src="images/wmmt.png"></a></br><br>';
+   echo '<a href="cardmanagement.php?mode=wmmt2"><img src="images/wmmt2.png"></a></br><br>';
 
 }
 
@@ -173,10 +177,148 @@ else {
       if (file_exists($includefile)){
       include $includefile;
       if ($path_parts['extension'] == NULL){
-          echo '<tr><td>'.$driver.'<td>'.$license.'<td>'.$timestamp.'<td>'; if ($nfcmode == 'nfcon'){echo '<a href="cardactions.php?mode=id3&command=nfcwrite&filetocopy='.$fullfile.'">NFC Copy</a><td>';} echo '<a href="cardmanagement.php?mode=fzero&command=delete&filetodelete='.$fullfile.'">delete</a><tr>';}}
+          echo '<tr><td>'.$driver.'<td>'.$license.'<td>'.$timestamp.'<td>'; if ($nfcmode == 'nfcon'){echo '<a href="cardactions.php?mode=fzero&command=nfcwrite&filetocopy='.$fullfile.'">NFC Copy</a><td>';} echo '<a href="cardmanagement.php?mode=fzero&command=delete&filetodelete='.$fullfile.'">delete</a><tr>';}}
       else {
       if ($path_parts['extension'] == NULL){
           echo '<tr><td>ORPHAN<td>NO LICENSE DATA<td>'.$timestamp.'<td><a href="cardmanagement.php?mode=fzero&command=delete&filetodelete='.$fullfile.'">delete</a><td><tr>';}}
+
+}
+echo '</table><br><br>';
+if($nfcmode == 'nfcon'){
+echo 'To copy card data to an NFC card select NFC Copy then place an NFC card onto the reader<br><br>The card will be wiped and the reader will confirm a successful write with two beeps';
+}
+}
+
+if ($mode == 'mkgp'){
+   echo '<b>Mario Kart GP Cards</b></br></br>';
+
+if ($nfcmode == 'nfcon'){
+   echo 'Cards can be deleted permanently or copied to NFC card</br></br>';
+}
+else {
+   echo 'Cards can be deleted permanently using the link below</br></br>';
+}
+   echo '<html><body><table class="center" id="options"><tr><th>Driver</th><th>Saved</th><th>Action</th>'; if($nfcmode == 'nfcon'){echo '<th>Action</th>';} echo '</tr>';
+   $path = '/boot/config/cards/mkgp/';
+   $files = scandir($path);
+   $files = array_diff(scandir($path), array('.', '..'));
+   foreach($files as $file){
+      $path_parts = pathinfo($file);
+      $fullfile = $path.$file;
+      $lastModifiedTimestamp = filemtime($fullfile);
+      $timestamp = date("M d Y", $lastModifiedTimestamp);
+      $includefile = "cards/mkgp/".$file.".printdata.php";
+      if (file_exists($includefile)){
+      include $includefile;
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>'.mb_convert_kana($l1, 'a', 'UTF-8').'<td>'.$timestamp.'<td>'; if ($nfcmode == 'nfcon'){echo '<a href="cardactions.php?mode=mkgp&command=nfcwrite&filetocopy='.$fullfile.'">NFC Copy</a><td>';} echo '<a href="cardmanagement.php?mode=mkgp&command=delete&filetodelete='.$fullfile.'">delete</a><tr>';}}
+      else {
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>ORPHAN<td>'.$timestamp.'<td><td><a href="cardmanagement.php?mode=mkgp&command=delete&filetodelete='.$fullfile.'">delete</a><td><tr>';}}
+
+}
+echo '</table><br><br>';
+if($nfcmode == 'nfcon'){
+echo 'To copy card data to an NFC card select NFC Copy then place an NFC card onto the reader<br><br>The card will be wiped and the reader will confirm a successful write with two beeps';
+}
+}
+
+if ($mode == 'mkgp2'){
+   echo '<b>Mario Kart GP2 Cards</b></br></br>';
+
+if ($nfcmode == 'nfcon'){
+   echo 'Cards can be deleted permanently or copied to NFC card</br></br>';
+}
+else {
+   echo 'Cards can be deleted permanently using the link below</br></br>';
+}
+   echo '<html><body><table class="center" id="options"><tr><th>Driver</th><th>Saved</th><th>Action</th>'; if($nfcmode == 'nfcon'){echo '<th>Action</th>';} echo '</tr>';
+   $path = '/boot/config/cards/mkgp2/';
+   $files = scandir($path);
+   $files = array_diff(scandir($path), array('.', '..'));
+   foreach($files as $file){
+      $path_parts = pathinfo($file);
+      $fullfile = $path.$file;
+      $lastModifiedTimestamp = filemtime($fullfile);
+      $timestamp = date("M d Y", $lastModifiedTimestamp);
+      $includefile = "cards/mkgp2/".$file.".printdata.php";
+      if (file_exists($includefile)){
+      include $includefile;
+      
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>'.mb_convert_kana(substr($l1, 0, -27), 'a', 'UTF-8').'<td>'.$timestamp.'<td>'; if ($nfcmode == 'nfcon'){echo '<a href="cardactions.php?mode=mkgp2&command=nfcwrite&filetocopy='.$fullfile.'">NFC Copy</a><td>';} echo '<a href="cardmanagement.php?mode=mkgp2&command=delete&filetodelete='.$fullfile.'">delete</a><tr>';}}
+      else {
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>ORPHAN<td>'.$timestamp.'<td><td><a href="cardmanagement.php?mode=mkgp2&command=delete&filetodelete='.$fullfile.'">delete</a><td><tr>';}}
+
+}
+echo '</table><br><br>';
+if($nfcmode == 'nfcon'){
+echo 'To copy card data to an NFC card select NFC Copy then place an NFC card onto the reader<br><br>The card will be wiped and the reader will confirm a successful write with two beeps';
+}
+}
+
+if ($mode == 'wmmt'){
+   echo '<b>Wangan Midnight Cards</b></br></br>';
+
+if ($nfcmode == 'nfcon'){
+   echo 'Cards can be deleted permanently or copied to NFC card</br></br>';
+}
+else {
+   echo 'Cards can be deleted permanently using the link below</br></br>';
+}
+   echo '<html><body><table class="center" id="options"><tr><th>Driver</th><th>Saved</th><th>Action</th>'; if($nfcmode == 'nfcon'){echo '<th>Action</th>';} echo '</tr>';
+   $path = '/boot/config/cards/wmmt/';
+   $files = scandir($path);
+   $files = array_diff(scandir($path), array('.', '..'));
+   foreach($files as $file){
+      $path_parts = pathinfo($file);
+      $fullfile = $path.$file;
+      $lastModifiedTimestamp = filemtime($fullfile);
+      $timestamp = date("M d Y", $lastModifiedTimestamp);
+      $includefile = "cards/wmmt/".$file.".printdata.php";
+      if (file_exists($includefile)){
+      include $includefile;
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>'.mb_convert_kana($l1, 'a', 'UTF-8').'<td>'.$timestamp.'<td>'; if ($nfcmode == 'nfcon'){echo '<a href="cardactions.php?mode=wmmt&command=nfcwrite&filetocopy='.$fullfile.'">NFC Copy</a><td>';} echo '<a href="cardmanagement.php?mode=wmmt&command=delete&filetodelete='.$fullfile.'">delete</a><tr>';}}
+      else {
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>ORPHAN<td>'.$timestamp.'<td><td><a href="cardmanagement.php?mode=wmmt&command=delete&filetodelete='.$fullfile.'">delete</a><td><tr>';}}
+
+}
+echo '</table><br><br>';
+if($nfcmode == 'nfcon'){
+echo 'To copy card data to an NFC card select NFC Copy then place an NFC card onto the reader<br><br>The card will be wiped and the reader will confirm a successful write with two beeps';
+}
+}
+
+if ($mode == 'wmmt2'){
+   echo '<b>Wangan Midnight2 Cards</b></br></br>';
+
+if ($nfcmode == 'nfcon'){
+   echo 'Cards can be deleted permanently or copied to NFC card</br></br>';
+}
+else {
+   echo 'Cards can be deleted permanently using the link below</br></br>';
+}
+   echo '<html><body><table class="center" id="options"><tr><th>Driver</th><th>Saved</th><th>Action</th>'; if($nfcmode == 'nfcon'){echo '<th>Action</th>';} echo '</tr>';
+   $path = '/boot/config/cards/wmmt2/';
+   $files = scandir($path);
+   $files = array_diff(scandir($path), array('.', '..'));
+   foreach($files as $file){
+      $path_parts = pathinfo($file);
+      $fullfile = $path.$file;
+      $lastModifiedTimestamp = filemtime($fullfile);
+      $timestamp = date("M d Y", $lastModifiedTimestamp);
+      $includefile = "cards/wmmt2/".$file.".printdata.php";
+      if (file_exists($includefile)){
+      include $includefile;
+      
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>'.mb_convert_kana($l1, 'a', 'UTF-8').'<td>'.$timestamp.'<td>'; if ($nfcmode == 'nfcon'){echo '<a href="cardactions.php?mode=wmmt2&command=nfcwrite&filetocopy='.$fullfile.'">NFC Copy</a><td>';} echo '<a href="cardmanagement.php?mode=wmmt2&command=delete&filetodelete='.$fullfile.'">delete</a><tr>';}}
+      else {
+      if ($path_parts['extension'] == NULL){
+          echo '<tr><td>ORPHAN<td>'.$timestamp.'<td><td><a href="cardmanagement.php?mode=wmmt2&command=delete&filetodelete='.$fullfile.'">delete</a><td><tr>';}}
 
 }
 echo '</table><br><br>';

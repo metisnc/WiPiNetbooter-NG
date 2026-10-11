@@ -78,8 +78,8 @@ $mcupleft=487;
 imagettftext($overlay, $licensesize,$angle,$licenseleft,$licensetop, $textcolour, $font_path, $license);
 imagettftext($overlay, $namesize,$angle,$left,$nametop, $textcolour, $driverfont_path, $name);
 imagettftext($overlay, $ranksize,$angle,$left,$ranktop, $textcolour, $iconfont_path, $rank);
-if ($sscup = 1) {imagettftext($overlay, $cupsize,$angle,$sscupleft,$cuptop, $textcolour, $iconfont_path, "G");}
-if ($mcup = 1) {imagettftext($overlay, $cupsize,$angle,$mcupleft,$cuptop, $textcolour, $iconfont_path, "7");}
+if ($sscup == 1) {imagettftext($overlay, $cupsize,$angle,$sscupleft,$cuptop, $textcolour, $iconfont_path, "G");}
+if ($mcup == 1) {imagettftext($overlay, $cupsize,$angle,$mcupleft,$cuptop, $textcolour, $iconfont_path, "7");}
 imagettftext($overlay, $citysize,$angle,$cityleft,$citytop, $textcolour, $iconfont_path, $citylines);
 
 imagecopyresampled($out, $cardimage, 0, 0, 0, 0, 640, 1010, 640, 1010);

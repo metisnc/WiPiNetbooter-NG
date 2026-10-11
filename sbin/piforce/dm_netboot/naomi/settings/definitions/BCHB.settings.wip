@@ -1,0 +1,53 @@
+# Cosmic Smash - Chunksin 15/05/2022 - Work in Progress
+Setting00: byte, read-only, default is 41
+Setting01: byte, read-only, default is 48
+Setting02: byte, read-only, default is 43
+Setting03: byte, read-only, default is 42
+Setting04: byte, read-only, default is 02
+Setting05: byte, read-only, default is 00
+Setting06: byte, read-only, default is 00
+Setting07: byte, read-only, default is 00
+Bonus Time: byte, default is 14
+  0a - 10
+  0f - 15
+  14 - 20
+  19 - 25
+  1e - 30
+  23 - 35
+  28 - 40
+  2d - 45
+  32 - 50
+Setting09: byte, read-only, default is 00
+Start Time: byte, default is 50
+  32 - 50
+  37 - 55
+  3c - 60
+  41 - 65
+  46 - 70
+  4b - 75
+  50 - 80
+  55 - 85
+  5a - 90
+  5f - 95
+  64 - 100
+  69 - 105
+  6e - 110
+  73 - 115
+  78 - 120
+  7d - 125
+  82 - 130
+Setting0b: byte, read-only, default is 00
+Setting0c: byte, read-only, default is 00
+Setting0d: byte, read-only, default is 00
+Setting0e: byte, read-only, default is 00
+Hidden: half-byte, read-only, default is 2
+Continue Announce: half-byte, default is 9
+  1 - Off English
+  3 - On English
+  9 - Off Mixed
+  b - On Mixed
+Setting10: byte, read-only
+  default is value of Continue Announce + value of Start Time + 44
+Setting11: byte, read-only, default is 01
+Setting12: byte, read-only, default is 14
+Setting13: byte, read-only, default is 00

@@ -1,0 +1,8 @@
+cabinet_config: cabinets.yaml
+rom_directory:
+ - roms
+patch_directory:
+ - patches
+sram_directory:
+ - srams
+settings_directory: naomi/settings/definitions/

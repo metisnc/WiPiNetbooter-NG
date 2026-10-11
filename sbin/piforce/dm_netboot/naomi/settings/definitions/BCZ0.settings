@@ -1,0 +1,96 @@
+# Spikers Battle - Chunksin 08/05/2022
+Setting00: byte, read-only, default is 42
+Setting01: byte, read-only, default is 43
+Setting02: byte, read-only, default is 5a
+Setting03: byte, read-only, default is 30
+Communication ID: byte, default is 00
+  0 - Single
+  1 - Master
+  2 - Slave
+Game Difficulty: byte, read-only if Communication ID is 2, default is 02
+  0 - Very Easy
+  1 - Easy
+  2 - Normal
+  3 - Hard
+  4 - Very Hard
+Match Points(1P): byte, read-only if Communication ID is 2, default is 02, values are 2 to 3
+Match Points(VS): byte, read-only if Communication ID is 0 or 2, default is 02, values are 2 to 3
+Setting08: byte, read-only, default is 00
+Setting09: byte, read-only, default is 00
+Setting0a: byte, read-only
+  default is 10 if Game Timer is e
+  default is 68 if Game Timer is 10
+  default is c0 if Game Timer is 12
+  default is 18 if Game Timer is 15
+  default is 70 if Game Timer is 17
+  default is c8 if Game Timer is 19
+  default is 20 if Game Timer is 1c
+  default is 78 if Game Timer is 1e
+  default is d0 if Game Timer is 20
+  default is 28 if Game Timer is 23
+  default is 80 if Game Timer is 25
+  default is d8 if Game Timer is 27
+  default is 30 if Game Timer is 2a
+Game Timer: byte, read-only if Communication ID is 2, default is 12
+   e - 60
+  10 - 70
+  12 - 80
+  15 - 90
+  17 - 100
+  19 - 110
+  1c - 120
+  1e - 130
+  20 - 140
+  23 - 150
+  25 - 160
+  27 - 170
+  2a - 180
+Player Life: byte, read-only if Communication ID is 2, default is 2c
+  c8 - 200
+  d2 - 210
+  dc - 220
+  e6 - 230
+  f0 - 240
+  fa - 250
+   4 - 260
+   e - 270
+  18 - 280
+  22 - 290
+  2c - 300
+  36 - 310
+  40 - 320
+  4a - 330
+  54 - 340
+  5e - 350
+  68 - 360
+  72 - 370
+  7c - 380
+  86 - 390
+  90 - 400
+Setting0d: byte, read-only
+  default is 0 if Player Life is c8
+  default is 0 if Player Life is d2
+  default is 0 if Player Life is dc
+  default is 0 if Player Life is e6
+  default is 0 if Player Life is f0
+  default is 0 if Player Life is fa
+  default is 1 if Player Life is 4
+  default is 1 if Player Life is e
+  default is 1 if Player Life is 18
+  default is 1 if Player Life is 22
+  default is 1 if Player Life is 2c
+  default is 1 if Player Life is 36
+  default is 1 if Player Life is 40
+  default is 1 if Player Life is 4a
+  default is 1 if Player Life is 54
+  default is 1 if Player Life is 5e
+  default is 1 if Player Life is 68
+  default is 1 if Player Life is 72
+  default is 1 if Player Life is 7c
+  default is 1 if Player Life is 86
+  default is 1 if Player Life is 90
+Damage Boost: byte, read-only if Communication ID is 2, default is 01
+  0 - Off
+  1 - On
+Setting0f: byte, read-only, default is 00
+

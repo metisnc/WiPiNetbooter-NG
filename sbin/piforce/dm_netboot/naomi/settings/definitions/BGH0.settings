@@ -1,0 +1,29 @@
+# Border Down - Chunksin 05/05/2022
+Difficulty: byte, default is 01
+  0 - Easy
+  1 - Normal
+  2 - Hard
+  3 - Mania
+Setting01: byte, read-only, default is 00
+Setting02: byte, read-only, default is 00
+Setting03: byte, read-only, default is 00
+Setting04: byte, read-only
+  default is 84 if Difficulty is 0
+  default is 33 if Difficulty is 1
+  default is 5d if Difficulty is 2
+  default is ea if Difficulty is 3
+Setting05: byte, read-only
+  default is 22 if Difficulty is 0
+  default is b8 if Difficulty is 1
+  default is 0a if Difficulty is 2
+  default is 90 if Difficulty is 3
+Setting06: byte, read-only
+  default is fb if Difficulty is 0
+  default is 96 if Difficulty is 1
+  default is e1 if Difficulty is 2
+  default is 8c if Difficulty is 3
+Setting07: byte, read-only
+  default is 38 if Difficulty is 0
+  default is e4 if Difficulty is 1
+  default is 84 if Difficulty is 2
+  default is 58 if Difficulty is 3

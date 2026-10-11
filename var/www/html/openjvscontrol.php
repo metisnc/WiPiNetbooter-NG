@@ -18,6 +18,6 @@ for ($i = 2; $i < count($mappingfiles); $i++) {
     $value = $mappingfilename;
     echo '<option value="'.$value.'">'.$mappingfilename.'</option>';}
 echo '</select>';
-echo '  <input type="submit" class="dropbtn" value="Launch" /></form>';
+echo '  <input type="submit" class="smalldropbtn" value="Launch" /></form>';
 
 ?>
