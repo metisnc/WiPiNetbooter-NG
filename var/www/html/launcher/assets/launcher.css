@@ -150,6 +150,7 @@ button:focus { outline: none; }
   gap: var(--gap);
   padding: var(--gap);
   min-height: 0;
+  touch-action: pan-y;
   transition: opacity .12s ease-out, transform .12s ease-out;
 }
 .grid.turn-next { opacity: 0; transform: translateX(-16px); transition: none; }

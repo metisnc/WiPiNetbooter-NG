@@ -180,6 +180,7 @@
       const img = el('img');
       img.alt = '';
       img.decoding = 'async';
+      img.draggable = false;
       img.src = imageUrl(game);
       img.addEventListener('error', () => img.replaceWith(el('span', 'noimg', game.name)));
       tile.appendChild(img);
@@ -243,24 +244,47 @@
     render(delta);
   }
 
-  // Horizontal swipe on the grid turns pages (buttons stay the main way: resistive touch).
-  const swipe = { x: 0, y: 0, consumed: false };
+  // Horizontal swipe on the grid (tiles included): the page follows the finger, then turns past
+  // SWIPE_TURN_PX or springs back. A swipe never opens the tile it started on.
+  const SWIPE_START_PX = 12;
+  const SWIPE_TURN_PX = 50;
+  const swipe = { x: 0, y: 0, dx: 0, active: false, dragging: false, consumed: false };
   function bindSwipe() {
     const grid = $('grid');
+    // With a mouse-like touchscreen, dragging a logo would start a native image drag
+    grid.addEventListener('dragstart', (e) => e.preventDefault());
     grid.addEventListener('pointerdown', (e) => {
+      swipe.active = true;
+      swipe.dragging = false;
+      swipe.consumed = false;
       swipe.x = e.clientX;
       swipe.y = e.clientY;
-      swipe.consumed = false;
+      swipe.dx = 0;
     });
-    grid.addEventListener('pointerup', (e) => {
+    window.addEventListener('pointermove', (e) => {
+      if (!swipe.active) return;
       const dx = e.clientX - swipe.x;
       const dy = e.clientY - swipe.y;
-      if (Math.abs(dx) > 60 && Math.abs(dy) < 50) {
-        swipe.consumed = true;
-        turn(dx < 0 ? 1 : -1);
-        setTimeout(() => { swipe.consumed = false; }, 50);
+      if (!swipe.dragging) {
+        if (Math.abs(dx) < SWIPE_START_PX || Math.abs(dx) < Math.abs(dy)) return;
+        swipe.dragging = true;
+        grid.style.transition = 'none';
       }
+      swipe.dx = dx;
+      grid.style.transform = 'translateX(' + Math.round(dx * 0.6) + 'px)';
     });
+    const end = () => {
+      if (!swipe.active) return;
+      swipe.active = false;
+      if (!swipe.dragging) return;
+      swipe.consumed = true;
+      setTimeout(() => { swipe.consumed = false; }, 60);
+      grid.style.transition = '';
+      grid.style.transform = '';
+      if (Math.abs(swipe.dx) >= SWIPE_TURN_PX) turn(swipe.dx < 0 ? 1 : -1);
+    };
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
   }
 
   // Resistive touch arrives as a mouse in the kiosk: dragging must scroll by hand.

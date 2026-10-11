@@ -12,7 +12,7 @@ Le launcher vit entièrement dans `/var/www/html/launcher/` et **ne modifie aucu
 - Saut **A–Z** plein écran, filtres **Genre / Orientation / Contrôles** à choix multiple (OU dans un groupe, ET entre les groupes).
 - Fiche jeu : vidéo (optionnelle), infos, favori ☆/★, gros bouton **LANCER**. Toujours 2 taps pour lancer : tuile puis LANCER.
 - Écran de lancement : recherche du netdimm, choix de la borne s'il y en a plusieurs, progression en %, succès, erreur avec la fin du log, **Réessayer** et **Annuler**.
-- Pages tournées avec les flèches ◀ ▶ ou par glissement horizontal sur la grille.
+- Pages tournées avec les flèches ◀ ▶ ou en glissant le doigt sur la grille, y compris sur les logos (la grille suit le doigt, revient en place si le geste est trop court). Les listes Filtres et Réglages défilent aussi au glissement.
 - Les choix d'affichage (onglet, filtres, page, densité, vidéo) sont mémorisés dans le navigateur.
 
 Ce qui est repris de WiPi : la liste des jeux (`csv/romsinfo.csv`, jeux activés dont la ROM est dans `/boot/roms`), l'option **System Filter**, les favoris (via `updatecsvfave.php`), « Last Game Played », l'option **Video Sound**, les images et vidéos (`/images`, `/videos`) et la commande de lancement de `load.php`.
