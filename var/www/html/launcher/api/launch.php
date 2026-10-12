@@ -29,7 +29,9 @@ if ($wanted !== '') {
 }
 
 if (!$dimms) {
-    json_out(['state' => 'nodimm', 'system' => $game['system']]);
+    // Configured but silent netdimms: distinguishes "nothing set up" from "the board does not answer"
+    json_out(['state' => 'nodimm', 'system' => $game['system'],
+        'offline' => $scenario === null ? compatible_dimms($game) : []]);
 }
 if (count($dimms) > 1) {
     json_out(['state' => 'choose', 'dimms' => $dimms]);

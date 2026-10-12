@@ -109,8 +109,17 @@
         actions([['Annuler', close]]);
         break;
       case 'nodimm':
-        message('Aucun netdimm en ligne pour ' + WL.systemInfo(res.system).label + '.', 'err');
         progress(null);
+        if (res.offline && res.offline.length) {
+          message(res.offline.map((d) => d.name + ' (' + d.ip + ')').join(', ') + ' ne répond pas.', 'err');
+          logLines([
+            'Un jeu en cours (Atomiswave notamment) peut couper le réseau du netdimm.',
+            'Redémarre la borne puis touche Réessayer.',
+          ]);
+        } else {
+          message('Aucun netdimm configuré pour ' + WL.systemInfo(res.system).label + '.', 'err');
+          logLines(['À ajouter dans Réglages \u203A Interface WiPi \u203A Setup \u203A Manage Netdimms.']);
+        }
         actions([['Réessayer', () => start(game), true], ['Fermer', close]]);
         break;
       case 'busy':

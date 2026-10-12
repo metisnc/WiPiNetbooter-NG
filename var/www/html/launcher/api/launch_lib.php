@@ -25,6 +25,18 @@ function loader_running()
     return $status === 0;
 }
 
+// Configured netdimms able to boot this game, online or not (to explain a "nodimm").
+function compatible_dimms($game)
+{
+    $list = [];
+    foreach (load_dimms() as $dimm) {
+        if (in_array($game['system'], supported_systems($dimm['type']), true)) {
+            $list[] = ['name' => $dimm['name'], 'ip' => $dimm['ip']];
+        }
+    }
+    return $list;
+}
+
 // Netdimms able to boot this game. In simulation, fake ones depending on the scenario.
 function candidate_dimms($game, $scenario)
 {
