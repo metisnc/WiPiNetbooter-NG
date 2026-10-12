@@ -83,7 +83,7 @@ function asset($path)
   </section>
 
   <!-- Screen "sleep" (3.5" kiosk only): the backlight cannot be switched off, so draw black -->
-  <section id="sleep" class="sleep" hidden><div id="sleep-text" class="sleep-text"></div></section>
+  <section id="sleep" class="sleep" hidden><div id="sleep-item" class="sleep-item"><img id="sleep-img" alt=""><span id="sleep-text" class="sleep-text"></span></div></section>
 </div>
 <script src="<?= asset('launcher.js') ?>"></script>
 <script src="<?= asset('launch.js') ?>"></script>

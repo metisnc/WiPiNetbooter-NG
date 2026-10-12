@@ -26,7 +26,8 @@
   };
   const VIDEO_DELAY_MS = 350;
   const SLEEP_CHOICES = [[0, 'Jamais'], [1, '1 min'], [2, '2 min'], [5, '5 min']];
-  const SLEEP_MOVE_MS = 30000;
+  const BOUNCE_SPEED = 40; // px per second
+  const BOUNCE_FPS = 20; // enough for a slow move, light on the Pi 3
   const KIOSK = params.get('kiosk') === '1';
   const GAP = 6;
   const TOP_H = 44;
@@ -614,7 +615,7 @@
   // ---------- screen sleep (kiosk only) ----------
   // Black screen after inactivity or after a game is launched; the first tap only wakes up.
   let sleepTimer = null;
-  let moveTimer = null;
+  let bounceTimer = null;
 
   function armSleep() {
     clearTimeout(sleepTimer);
@@ -622,11 +623,29 @@
     sleepTimer = setTimeout(sleep, state.sleepMin * 60000);
   }
 
-  function placeSleepText() {
+  // DVD-style bounce of the running game's logo
+  function startBounce() {
     const box = $('sleep');
-    const text = $('sleep-text');
-    text.style.left = Math.random() * Math.max(0, box.clientWidth - text.offsetWidth) + 'px';
-    text.style.top = Math.random() * Math.max(0, box.clientHeight - text.offsetHeight) + 'px';
+    const item = $('sleep-item');
+    let w = 0;
+    let h = 0;
+    const measure = () => { w = item.offsetWidth; h = item.offsetHeight; };
+    measure();
+    let x = Math.random() * Math.max(0, box.clientWidth - w);
+    let y = Math.random() * Math.max(0, box.clientHeight - h);
+    let vx = (Math.random() < 0.5 ? -1 : 1) * BOUNCE_SPEED / BOUNCE_FPS;
+    let vy = (Math.random() < 0.5 ? -1 : 1) * BOUNCE_SPEED * 0.75 / BOUNCE_FPS;
+    $('sleep-img').onload = measure;
+    bounceTimer = setInterval(() => {
+      if (!w || !h) measure(); // logo still loading
+      const maxX = Math.max(0, box.clientWidth - w);
+      const maxY = Math.max(0, box.clientHeight - h);
+      x += vx;
+      y += vy;
+      if (x <= 0 || x >= maxX) { vx = -vx; x = Math.min(Math.max(x, 0), maxX); }
+      if (y <= 0 || y >= maxY) { vy = -vy; y = Math.min(Math.max(y, 0), maxY); }
+      item.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
+    }, 1000 / BOUNCE_FPS);
   }
 
   function sleep() {
@@ -636,14 +655,16 @@
     }
     stopVideo();
     const last = state.byRom[state.history[0]];
-    $('sleep-text').textContent = last ? '\u25B6 ' + last.name : 'WiPi';
+    const img = $('sleep-img');
+    img.hidden = !(last && last.image);
+    if (last && last.image) img.src = imageUrl(last);
+    $('sleep-text').textContent = last && last.image ? '' : (last ? last.name : 'WiPi');
     $('sleep').hidden = false;
-    placeSleepText();
-    moveTimer = setInterval(placeSleepText, SLEEP_MOVE_MS);
+    startBounce();
   }
 
   function wake() {
-    clearInterval(moveTimer);
+    clearInterval(bounceTimer);
     $('sleep').hidden = true;
     armSleep();
   }
