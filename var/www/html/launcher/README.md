@@ -7,7 +7,7 @@ Le launcher vit entièrement dans `/var/www/html/launcher/` et **ne modifie aucu
 ## Fonctionnalités
 
 - Grille de logos paginée, au choix **3×3, 2×3, 2×2 ou 1×2** sur le 3,5" (plus de tuiles sur un grand écran).
-- **Veille de l'écran** (3,5" uniquement) : écran noir avec le logo du jeu en cours qui rebondit sur les bords, après 2 min sans toucher l'écran ou après un lancement (réglable : jamais, 1, 2, 5 min). Le rétroéclairage du MHS 3,5" (ILI9486) n'est pas pilotable : on affiche du noir. Le premier tap réveille sans rien déclencher.
+- **Veille de l'écran** (3,5" uniquement) : écran noir avec le logo du jeu en cours qui rebondit sur les bords, 2 min après un lancement ou sans toucher l'écran, **uniquement quand un jeu tourne** (envoyé depuis le démarrage du Pi, par le launcher ou l'interface d'origine) (réglable : jamais, 1, 2, 5 min). Le rétroéclairage du MHS 3,5" (ILI9486) n'est pas pilotable : on affiche du noir. Le premier tap réveille sans rien déclencher.
 - Écran **⚙ Réglages** : affichage de la grille, vidéo dans la fiche, état des netdimms (en ligne ou non), nombre de jeux et mode simulation/réel, bouton **Interface WiPi** vers l'interface d'origine.
 - Onglets **★ Favoris**, **TOUS**, un onglet par système présent (Naomi, Naomi 2, Atomiswave, Chihiro, Triforce) et **↺ Récents**.
 - Saut **A–Z** plein écran, filtres **Genre / Orientation / Contrôles** à choix multiple (OU dans un groupe, ET entre les groupes).

@@ -170,7 +170,7 @@
         logLines(s.system === 'Sammy Atomiswave' ? ['Les jeux Atomiswave peuvent mettre jusqu’à 30 s à démarrer.'] : null);
         actions([['OK', backToList, true]]);
         closeTimer = setTimeout(backToList, DONE_CLOSE_MS);
-        WL.armSleep(); // the sleep delay counts from the end of the launch
+        WL.setPlaying(s.rom); // the sleep delay counts from the end of the launch
         break;
       case 'error':
         fail('Échec du chargement.', s.log);

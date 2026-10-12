@@ -50,6 +50,7 @@
     video: true,
     sound: false,
     simulate: false,
+    playing: null, // rom running on the cabinet, null until a game is sent
     sleepMin: 2,
   };
 
@@ -601,6 +602,8 @@
         state.games.forEach((g) => { state.byRom[g.rom] = g; });
         state.history = data.history || [];
         state.sound = !!data.sound;
+        state.playing = data.playing || null;
+        armSleep();
         state.simulate = !!data.simulate;
         $('sim-flag').hidden = !data.simulate;
         renderTabs();
@@ -619,7 +622,8 @@
 
   function armSleep() {
     clearTimeout(sleepTimer);
-    if (!KIOSK || !state.sleepMin || !$('sleep').hidden) return;
+    // No sleep before a game runs on the cabinet (nothing to show, and the screen is in use)
+    if (!KIOSK || !state.sleepMin || !state.playing || !$('sleep').hidden) return;
     sleepTimer = setTimeout(sleep, state.sleepMin * 60000);
   }
 
@@ -654,7 +658,7 @@
       return;
     }
     stopVideo();
-    const last = state.byRom[state.history[0]];
+    const last = state.byRom[state.playing];
     const img = $('sleep-img');
     img.hidden = !(last && last.image);
     if (last && last.image) img.src = imageUrl(last);
@@ -687,7 +691,7 @@
     addRecent: addRecent,
     closeSheet: closeSheet,
     stopVideo: stopVideo,
-    armSleep: armSleep,
+    setPlaying: (rom) => { state.playing = rom; armSleep(); },
     render: () => render(),
   };
 

@@ -429,9 +429,9 @@ button:focus { outline: none; }
   pointer-events: none;
   will-change: transform;
 }
-.sleep-item img { display: block; max-width: 180px; max-height: 70px; }
+.sleep-item img { display: block; max-width: 300px; max-height: 130px; }
 .sleep-item img[hidden] { display: none; }
-.sleep-text { display: block; color: #8a90a8; font-size: 16px; font-weight: bold; white-space: nowrap; }
+.sleep-text { display: block; color: #8a90a8; font-size: 24px; font-weight: bold; white-space: nowrap; }
 .sleep-text:empty { display: none; }
 
 /* ---------- preview frame (?frame=480x320 on a PC) ---------- */
