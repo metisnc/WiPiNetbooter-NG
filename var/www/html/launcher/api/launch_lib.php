@@ -6,7 +6,8 @@
 require_once __DIR__ . '/lib.php';
 
 define('LAUNCH_STATE', DATA_DIR . '/launch.json');
-define('LOADER_PATTERN', '[w]ipiloader\.py|[n]etdimm_send');
+// Matches the processes only, not e.g. a "tail /var/log/netdimm_send.log"
+define('LOADER_PATTERN', '[w]ipiloader\.py|[d]m_netboot/netdimm_send');
 
 function read_launch()
 {
@@ -93,7 +94,7 @@ function launch_status()
     }
     $public = public_launch($launch);
     if (!empty($launch['ended'])) {
-        return $public + ['state' => $launch['ended']];
+        return $public + ['state' => $launch['ended']] + ($launch['result'] ?? []);
     }
 
     $elapsed = microtime(true) - $launch['started'];
@@ -112,7 +113,7 @@ function launch_status()
     }
 
     if ($last === 'COMPLETE') {
-        return $public + ['state' => 'done', 'progress' => 100];
+        return $public + finish_launch($launch, 'done', ['progress' => 100]);
     }
     if (loader_running()) {
         return $public + (is_numeric($last)
@@ -126,7 +127,17 @@ function launch_status()
     if (!$log) {
         $log = tail_lines('/var/log/wipiloader.log', 4);
     }
-    return $public + ['state' => 'error', 'progress' => is_numeric($last) ? (int)$last : 0, 'log' => $log];
+    return $public + finish_launch($launch, 'error', ['progress' => is_numeric($last) ? (int)$last : 0, 'log' => $log]);
+}
+
+// DietPi empties /var/log (RAMlog) every hour at hh:17: keep the final state of a real launch
+// in launch.json so it does not turn into an error once the progress file is wiped.
+function finish_launch($launch, $state, $result)
+{
+    $launch['ended'] = $state;
+    $launch['result'] = $result;
+    write_launch($launch);
+    return ['state' => $state] + $result;
 }
 
 function launch_in_progress()

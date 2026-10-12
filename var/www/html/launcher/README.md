@@ -94,5 +94,6 @@ tools/deploy.sh         (à la racine du dépôt) déploiement tar via ssh — l
 2. Avec un seul netdimm en ligne, il exécute `sudo python3 /sbin/piforce/wipiloader.py <rom> <ip> <relaymode> <zeromode> <mapping> <ffb>`, comme `load.php`. Chaque argument est validé puis passé par `escapeshellarg`.
 3. `status.php` lit `/var/log/progress_<ip>`, écrit par `dm_netboot` (lignes `0`…`100` puis `COMPLETE`). Un fichier antérieur au lancement est ignoré. Si le processus s'est arrêté sans `COMPLETE`, c'est une erreur, et la fin de `/var/log/netdimm_send.log` est affichée.
 4. **Annuler** tue `wipiloader.py` et `netdimm_send`. Le netdimm reste alors sur « Now Loading » jusqu'au prochain envoi.
+5. DietPi garde `/var/log` en RAM et le **vide toutes les heures à hh:17**. L'état final d'un lancement (jeu lancé, ou erreur avec son log) est donc mémorisé dans `data/launch.json` dès qu'il est connu.
 
 Contraintes respectées : PHP 7.3 (pas de fonctions fléchées), Chromium 88, aucun framework ni CDN, aucune accélération matérielle sur le Pi 3 (effets légers, pas de flou, fonds opaques).
