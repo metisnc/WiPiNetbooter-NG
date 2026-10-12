@@ -81,6 +81,9 @@ function asset($path)
       <div id="launch-actions" class="launch-actions"></div>
     </div>
   </section>
+
+  <!-- Screen "sleep" (3.5" kiosk only): the backlight cannot be switched off, so draw black -->
+  <section id="sleep" class="sleep" hidden><div id="sleep-text" class="sleep-text"></div></section>
 </div>
 <script src="<?= asset('launcher.js') ?>"></script>
 <script src="<?= asset('launch.js') ?>"></script>

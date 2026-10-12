@@ -418,6 +418,11 @@ button:focus { outline: none; }
 .launch-choices .pill, .launch-actions .pill { min-height: 48px; min-width: 120px; font-size: 16px; border-radius: 24px; }
 .launch-actions .pill.primary { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
 
+/* ---------- screen sleep ---------- */
+.sleep { position: absolute; inset: 0; z-index: 100; background: #000; }
+.sleep[hidden] { display: none; }
+.sleep-text { position: absolute; color: #2a2d3a; font-size: 14px; white-space: nowrap; pointer-events: none; }
+
 /* ---------- preview frame (?frame=480x320 on a PC) ---------- */
 body.framed { display: flex; align-items: center; justify-content: center; background: #222; }
 body.framed #app { outline: 2px solid #555; }

@@ -25,6 +25,9 @@
     '1x2': { w: 300, h: 100 },
   };
   const VIDEO_DELAY_MS = 350;
+  const SLEEP_CHOICES = [[0, 'Jamais'], [1, '1 min'], [2, '2 min'], [5, '5 min']];
+  const SLEEP_MOVE_MS = 30000;
+  const KIOSK = params.get('kiosk') === '1';
   const GAP = 6;
   const TOP_H = 44;
   const BOTTOM_H = 54;
@@ -46,6 +49,7 @@
     video: true,
     sound: false,
     simulate: false,
+    sleepMin: 2,
   };
 
   // ---------- helpers ----------
@@ -72,7 +76,7 @@
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        tab: state.tab, filters: state.filters, page: state.page, density: state.density, video: state.video,
+        tab: state.tab, filters: state.filters, page: state.page, density: state.density, video: state.video, sleepMin: state.sleepMin,
       }));
     } catch (e) { /* storage unavailable: not critical */ }
   }
@@ -89,6 +93,7 @@
         state.page = saved.page || 0;
         if (DENSITIES[saved.density]) state.density = saved.density;
         if (typeof saved.video === 'boolean') state.video = saved.video;
+        if (SLEEP_CHOICES.some(([m]) => m === saved.sleepMin)) state.sleepMin = saved.sleepMin;
       }
     } catch (e) { /* ignore */ }
   }
@@ -424,6 +429,16 @@
         renderSettings();
         save();
       });
+    if (KIOSK) {
+      chipGroup(box, 'Veille de l\u2019écran', SLEEP_CHOICES,
+        (m) => m === state.sleepMin,
+        (m) => {
+          state.sleepMin = m;
+          renderSettings();
+          save();
+          armSleep();
+        });
+    }
 
     const net = el('div', 'filter-group');
     net.appendChild(el('h3', null, 'Netdimms'));
@@ -596,6 +611,51 @@
       });
   }
 
+  // ---------- screen sleep (kiosk only) ----------
+  // Black screen after inactivity or after a game is launched; the first tap only wakes up.
+  let sleepTimer = null;
+  let moveTimer = null;
+
+  function armSleep() {
+    clearTimeout(sleepTimer);
+    if (!KIOSK || !state.sleepMin || !$('sleep').hidden) return;
+    sleepTimer = setTimeout(sleep, state.sleepMin * 60000);
+  }
+
+  function placeSleepText() {
+    const box = $('sleep');
+    const text = $('sleep-text');
+    text.style.left = Math.random() * Math.max(0, box.clientWidth - text.offsetWidth) + 'px';
+    text.style.top = Math.random() * Math.max(0, box.clientHeight - text.offsetHeight) + 'px';
+  }
+
+  function sleep() {
+    if (!$('launch').hidden) { // never during a transfer
+      armSleep();
+      return;
+    }
+    stopVideo();
+    const last = state.byRom[state.history[0]];
+    $('sleep-text').textContent = last ? '\u25B6 ' + last.name : 'WiPi';
+    $('sleep').hidden = false;
+    placeSleepText();
+    moveTimer = setInterval(placeSleepText, SLEEP_MOVE_MS);
+  }
+
+  function wake() {
+    clearInterval(moveTimer);
+    $('sleep').hidden = true;
+    armSleep();
+  }
+
+  function bindSleep() {
+    if (!KIOSK) return;
+    // Wake on click (not pointerdown) so the tap's click lands on the black screen, not on a tile
+    $('sleep').addEventListener('click', wake);
+    document.addEventListener('pointerdown', () => { if ($('sleep').hidden) armSleep(); }, true);
+    armSleep();
+  }
+
   // Shared with launch.js
   window.WL = {
     $: $,
@@ -606,11 +666,13 @@
     addRecent: addRecent,
     closeSheet: closeSheet,
     stopVideo: stopVideo,
+    armSleep: armSleep,
     render: () => render(),
   };
 
   restore();
   layout();
   bind();
+  bindSleep();
   load().then(() => { if (window.WLaunch) window.WLaunch.resume(); });
 })();
